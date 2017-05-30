@@ -1,7 +1,7 @@
 # Change these
-server 'www.phlurby.com', port: 80, roles: [:web, :app, :db], primary: true
+server 'www.phlurby.com', port: 22, roles: [:web, :app, :db], primary: true
 
-set :repo_url,        'git@github.com/danabr75/phlurby.git'
+set :repo_url,        'git@github.com:danabr75/phlurby.git'
 set :application,     'phlurby'
 set :user,            'deploy'
 set :puma_threads,    [4, 16]
