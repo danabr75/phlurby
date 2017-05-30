@@ -23,7 +23,10 @@ set :ssh_options,     { forward_agent: true, user: fetch(:user), keys: %w(~/.ssh
 set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
-set :rvm_ruby_version, '2.4.1@phlurby'
+# set :rvm_type, :user 
+# set :rvm_ruby_version, '2.4.1@phlurby'
+# set :bundle_dir, ''
+# set :bundle_flags, '--quiet'
 
 ## Defaults:
 # set :scm,           :git
