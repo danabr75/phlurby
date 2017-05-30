@@ -6,10 +6,10 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-gem "rspec"
 gem 'bootstrap-sass'
 
-gem 'bundler-audit'
+# Timed out
+# gem 'bundler-audit'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
@@ -40,6 +40,7 @@ gem 'jbuilder', '~> 2.5'
 # gem 'capistrano-rails', group: :development
 
 group :development, :test do
+  gem "rspec"
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
@@ -62,6 +63,7 @@ group :development do
     gem 'capistrano-rails',   require: false
     gem 'capistrano-bundler', require: false
     gem 'capistrano3-puma',   require: false
+    gem 'capistrano-bundler'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
