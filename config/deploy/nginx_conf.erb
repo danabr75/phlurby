@@ -1,3 +1,4 @@
+<!-- unused -->
 upstream <%= fetch(:nginx_upstream) %> {
   server unix://<%= current_path.join("../shared/tmp/sockets/#{fetch(:application)}-puma.sock") %>;
 }
