@@ -9,6 +9,9 @@ server {
   server_name <%= fetch(:nginx_server_name) %>;
   root <%= current_path.join('public') %>;
 
+  access_log <%= current_path.join('log/nginx.access.log') %>;
+  error_log <%= current_path.join('log/nginx.error.log') %> info;
+
   try_files $uri/index.html $uri.html $uri @<%= fetch(:nginx_upstream) %>;
 
   location ^~ /assets/ {
