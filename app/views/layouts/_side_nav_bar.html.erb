@@ -3,5 +3,14 @@
     <li class=""><%= link_to("Home", root_path, {:class => "btn btn-lg #{current_page?(root_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
     <li class=""><%= link_to("About", about_path, {:class => "btn btn-lg #{current_page?(about_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
     <li class=""><%= link_to("Contact", contact_path, {:class => "btn btn-lg #{current_page?(contact_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+    <% if current_user %>
+      <% if can? :manage, User %>
+        <li class=""><%= link_to("Manage Users", users_path, {:class => "btn btn-lg #{current_page?(users_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+      <% end %>
+      <li class=""><%= link_to("Details", edit_user_registration_path, {:class => "btn btn-lg #{current_page?(edit_user_registration_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+      <li class=""><%= link_to("Logout", destroy_user_session_path, {:method => "DELETE", :class => "btn btn-lg #{current_page?(destroy_user_session_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+    <% else %>
+      <li class=""><%= link_to("Login", new_user_session_path, {:class => "btn btn-lg #{current_page?(new_user_session_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+    <% end %>
   </ul>
 </div>

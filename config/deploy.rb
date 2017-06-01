@@ -1,3 +1,4 @@
+# cap production deploy
 # require "rvm/capistrano"
 # Change these
 server 'www.phlurby.com', port: 22, roles: [:web, :app, :db], primary: true

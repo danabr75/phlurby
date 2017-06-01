@@ -40,6 +40,9 @@ gem 'jbuilder', '~> 2.5'
 
 gem 'devise'
 
+gem 'cancancan', '~> 1.10' 
+gem "rolify"
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
