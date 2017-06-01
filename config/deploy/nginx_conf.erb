@@ -1,5 +1,5 @@
 upstream <%= fetch(:nginx_upstream) %> {
-  server unix:/tmp/<%= fetch(:nginx_upstream) %>.sock fail_timeout=0;
+  server unix://<%= current_path.join("../shared/tmp/sockets/#{fetch(:application)}-puma.sock") %>;
 }
 
 access_log <%= current_path.join('log/nginx.access.log') %>;
@@ -43,4 +43,4 @@ server {
   }
 }
 
-# sudo ln -nfs /home/deploy/apps/phlurby/current/config/deploy/nginx_conf.erb  /etc/nginx/sites-enabled/phlurby
+<%# sudo ln -nfs /home/deploy/apps/phlurby/current/config/deploy/nginx_conf.erb  /etc/nginx/sites-enabled/phlurby %> 
