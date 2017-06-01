@@ -29,6 +29,13 @@ set :rvm_ruby_version, '2.4.1@phlurby'
 set :bundle_dir, ''
 set :bundle_flags, '--deployment'
 
+# set :nginx_path, '/etc/nginx' # directory containing sites-available and sites-enabled
+# set :nginx_template, 'config/deploy/nginx_conf.erb' # configuration template
+# set :nginx_server_name, 'example.com' # optional, defaults to :application
+# set :nginx_upstream, 'example-app' # optional, defaults to :application
+# set :nginx_listen, 80 # optional, default is not set
+# set :nginx_roles, :all
+
 ## Defaults:
 # set :scm,           :git
 # set :branch,        :master
