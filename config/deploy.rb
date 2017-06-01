@@ -32,7 +32,7 @@ set :bundle_flags, '--deployment'
 # set :nginx_path, '/etc/nginx' # directory containing sites-available and sites-enabled
 # set :nginx_template, 'config/deploy/nginx_conf.erb' # configuration template
 set :nginx_server_name, 'phlurby.com www.phlurby.com' # optional, defaults to :application
-set :nginx_upstream, 'puma' # optional, defaults to :application
+set :nginx_upstream, 'phlurby.com www.phlurby.com' # optional, defaults to :application
 # set :nginx_listen, 80 # optional, default is not set
 # set :nginx_roles, :all
 
