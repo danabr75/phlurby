@@ -1,0 +1,7 @@
+<div class="btn-block">
+  <ul class=" list-inline">
+    <li class=""><%= link_to("Home", root_path, {:class => "btn btn-lg #{current_page?(root_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+    <li class=""><%= link_to("About", about_path, {:class => "btn btn-lg #{current_page?(about_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+    <li class=""><%= link_to("Contact", contact_path, {:class => "btn btn-lg #{current_page?(contact_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+  </ul>
+</div>
