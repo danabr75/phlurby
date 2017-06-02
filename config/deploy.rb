@@ -37,9 +37,16 @@ set :bundle_flags, '--deployment'
     # set :nginx_sites_available_path, '/etc/nginx/sites-available'
     # set :nginx_sites_enabled_path, '/etc/nginx/sites-enabled'
     # set :nginx_socket_flags, fetch(:nginx_flags)
-    # set :nginx_ssl_certificate, "/etc/ssl/certs/{fetch(:nginx_config_name)}.crt"
-    # set :nginx_ssl_certificate_key, "/etc/ssl/private/{fetch(:nginx_config_name)}.key"
-    # set :nginx_use_ssl, false
+
+    #ssl_certificate /etc/nginx/ssl/nginx.crt;
+    #ssl_certificate_key /etc/nginx/ssl/nginx.key;
+    #ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    #ssl_prefer_server_ciphers on;
+    #ssl_ciphers AES256+EECDH:AES256+EDH:!aNULL;
+    #ssl on;
+  set :nginx_ssl_certificate, "/etc/nginx/ssl/nginx.crt"
+  set :nginx_ssl_certificate_key, "/etc/nginx/ssl/nginx.key"
+  set :nginx_use_ssl, true
 
 # set :nginx_path, '/etc/nginx' # directory containing sites-available and sites-enabled
 # set :nginx_template, 'config/deploy/nginx_conf.erb' # configuration template
