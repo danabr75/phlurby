@@ -44,9 +44,9 @@ set :bundle_flags, '--deployment'
     #ssl_prefer_server_ciphers on;
     #ssl_ciphers AES256+EECDH:AES256+EDH:!aNULL;
     #ssl on;
-  set :nginx_ssl_certificate, "/etc/nginx/ssl/nginx.crt"
-  set :nginx_ssl_certificate_key, "/etc/nginx/ssl/nginx.key"
-  set :nginx_use_ssl, true
+  # set :nginx_ssl_certificate, "/etc/nginx/ssl/nginx.crt"
+  # set :nginx_ssl_certificate_key, "/etc/nginx/ssl/nginx.key"
+  # set :nginx_use_ssl, true
 
 # set :nginx_path, '/etc/nginx' # directory containing sites-available and sites-enabled
 # set :nginx_template, 'config/deploy/nginx_conf.erb' # configuration template
