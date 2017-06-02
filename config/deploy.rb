@@ -39,7 +39,7 @@ set :bundle_flags, '--deployment'
 
 ## Defaults:
 # set :scm,           :git
-# set :branch,        :master
+set :branch,        :test
 # set :format,        :pretty
 # set :log_level,     :debug
 # set :keep_releases, 5
