@@ -22,3 +22,5 @@ install_plugin Capistrano::SCM::Git
 Dir.glob('lib/capistrano/tasks/*.rake').each { |r| import r }
 
 # cap production deploy
+# https://github.com/seuros/capistrano-puma
+# cap production puma:config
