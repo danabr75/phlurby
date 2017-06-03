@@ -18,12 +18,10 @@ Rails.application.routes.draw do
   # end
   # resources :users, :only => [:show]
 
-  scope :protocol => 'https://', :constraints => { :protocol => 'https://' } do
-    resources :users, only: [:index, :disable, :renable] do
-      member do
-        post :disable
-        post :renable
-      end
+  resources :users, only: [:index, :disable, :renable] do
+    member do
+      post :disable
+      post :renable
     end
   end
 end

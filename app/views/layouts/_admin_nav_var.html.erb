@@ -1,0 +1,10 @@
+<div class="btn-block container bg-info">
+  <p class="text-center">Admin Panel</p>
+  <ul class=" list-inline">
+    <% if current_user %>
+      <% if can? :manage, User %>
+        <li class=""><%= link_to("Manage Users", users_path, {:class => "btn  #{current_page?(users_path) ? 'btn-primary btn-success' : 'btn-info btn-secondary' }"}) %></li>
+      <% end %>
+    <% end %>
+  </ul>
+</div>

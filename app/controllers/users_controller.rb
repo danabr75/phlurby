@@ -1,3 +1,5 @@
+# Implement for all users
+# http://www.tonyamoyal.com/2010/09/29/rails-authentication-with-devise-and-cancan-part-2-restful-resources-for-administrators/
 class UsersController < ApplicationController
   load_and_authorize_resource
 

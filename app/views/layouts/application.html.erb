@@ -11,6 +11,8 @@
 
   <body>
     <div class="container-fluid">
+
+      <%= render 'layouts/admin_nav_var.html.erb' if current_user && current_user.roles.any? %>
       <%= render 'layouts/side_nav_bar.html.erb' %>
       <div class="">
       <div id="alerts-container"></div>
