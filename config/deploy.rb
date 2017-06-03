@@ -1,5 +1,8 @@
 # cap production deploy
 # require "rvm/capistrano"
+# https://stackoverflow.com/questions/29547314/how-to-restart-puma-after-deploy
+# cap production deploy:restart
+# bundle exec pumactl -P /home/deploy/.pids/puma.pid restart
 # Change these
 server 'www.phlurby.com', port: 22, roles: [:web, :app, :db], primary: true
 
