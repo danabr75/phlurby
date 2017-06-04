@@ -22,11 +22,11 @@
         <% if can? :read, attachment %>
         <td><%= link_to 'Show', attachment %></td>
         <% end %>
-        <% if can? :update, attachment %>
-        <td><%= link_to 'Edit', edit_attachmnent_path(attachment) %></td>
+        <% if can? :edit, attachment %>
+        <td><%= link_to 'Edit', edit_attachment_path(attachment) %></td>
         <% end %>
         <% if can? :read, attachment %>
-        <td><%= link_to 'Download', download_document_path(attachment) %></td>
+        <td><%= link_to 'Download', download_attachment_path(attachment) %></td>
         <% end %>
         <% if can? :destroy, attachment %>
         <td><%= link_to 'Destroy', attachment, method: :delete, data: { confirm: 'Are you sure?' } %></td>

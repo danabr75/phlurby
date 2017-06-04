@@ -1,0 +1,55 @@
+<h2>Edit User</h2>
+<h3>Details</h3>
+<!-- 
+<%= form_for(@user, url: user_path(@user), html: { method: :put }) do |f| %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true %>
+  </div>
+
+
+  <div class="field">
+    <label>Attachments</label>
+  <%= f.collection_select :attachment_ids, Attachment.all, :id, :filename, {}, { multiple: true } %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Update" %>
+  </div>
+-->
+<% end %>
+<%= render :partial => 'form', :locals => {:disable_form => false} %>
+
+
+<h3>Edit Password</h2>
+<%= form_for(@user, url: user_path(@user), html: { method: :put }) do |f| %>
+  <div class="field">
+    <%= f.label :password %> <i>(leave blank if you don't want to change it)</i><br />
+    <%= f.password_field :password, autocomplete: "off" %>
+    <% if @minimum_password_length %>
+      <br />
+      <em><%= @minimum_password_length %> characters minimum</em>
+    <% end %>
+  </div>
+
+  <div class="field">
+    <%= f.label :password_confirmation %><br />
+    <%= f.password_field :password_confirmation, autocomplete: "off" %>
+  </div>
+
+  <div class="field">
+    <%= f.label :current_password %> <i>(we need your current password to confirm your changes)</i><br />
+    <%= f.password_field :current_password, autocomplete: "off" %>
+  </div>
+
+  <div class="actions">
+    <%= f.submit "Update Password" %>
+  </div>
+<% end %>
+
+<% if can? :read, @user %>
+  <%= link_to 'Show', user_path(@user) %>
+<% end %>
+
+<%= link_to "Back", :back %>

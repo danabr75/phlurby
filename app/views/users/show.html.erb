@@ -1,0 +1,10 @@
+<h2><%= @user_name.to_s.humanize %></h2>
+<h3>Details</h3>
+
+<%= render :partial => 'form', :locals => {:disable_form => true} %>
+
+
+<% if can? :edit, @user %>
+  <%= link_to 'Edit', edit_user_path(@user) %>
+<% end %>
+<%= link_to "Back", :back %>

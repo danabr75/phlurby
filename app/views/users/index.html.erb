@@ -1,7 +1,7 @@
 <ul>
   <% @users.each do |user| %>
     <li>
-      <%= link_to_if(false, "Edit (devise doesn't support)", edit_user_registration_path, {:class => "btn btn-info btn-secondary", disabled: true}) %>
+      <%= link_to_if(can?(:edit, user), "Edit", edit_user_path(user), {:class => "btn btn-info btn-secondary"}) %>
       <% if user.disabled %>
       <!-- , confirm: 'Delete?', class: 'link-delete', 'data-message' => 'Are you sure?', 'data-severity' => 'danger', :remote => true  -->
         <%#= link_to("Renable", renable_user_path(user.id), {:class => "btn btn-info btn-secondary", method: "POST", 'data-message' => 'Are you sure?', 'data-severity' => 'danger', :remote => true}) %>

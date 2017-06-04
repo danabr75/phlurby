@@ -1,0 +1,20 @@
+<% disable_form ||= false%>
+<%= form_for(@user, url: user_path(@user), html: { method: :put }) do |f| %>
+
+  <div class="field">
+    <%= f.label :email %><br />
+    <%= f.email_field :email, autofocus: true, disabled: disable_form, class: "#{disable_form ? 'disabled' : ''}"  %>
+  </div>
+
+
+  <div class="field">
+    <label>Attachments</label>
+  <%= f.collection_select :attachment_ids, Attachment.all, :id, :filename, {}, { multiple: true, disabled: disable_form, class: "#{disable_form ? 'disabled' : ''}" } %>
+  </div>
+
+  <% if !disable_form %>
+    <div class="actions">
+      <%= f.submit "Update" %>
+    </div>
+  <% end %> 
+<% end %>

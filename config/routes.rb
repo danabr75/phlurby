@@ -9,6 +9,13 @@ Rails.application.routes.draw do
       get :download
     end
   end
+
+  resources :attachments do
+    member do
+      get :download
+    end
+  end
+
   devise_for :users
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   get 'welcome/index'
@@ -28,7 +35,7 @@ Rails.application.routes.draw do
   # end
   # resources :users, :only => [:show]
 
-  resources :users, only: [:index, :disable, :renable, :attachments] do
+  resources :users, only: [:index, :disable, :renable, :attachments, :show, :update, :edit] do
     member do
       get :attachments
       post :disable
