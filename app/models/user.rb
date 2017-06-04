@@ -5,6 +5,8 @@ class User < GeneralObject
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
+  has_and_belongs_to_many :attachments
+
   # after_create :assign_default_role
 
   # def assign_default_role

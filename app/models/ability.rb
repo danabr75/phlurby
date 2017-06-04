@@ -15,8 +15,21 @@ class Ability
     can :create, User
     can [:read, :update, :destroy], User, :id => user.try(:id)
 
+    can :read, Attachment do |a|
+      u.attachments.include?(a)
+    end
+
+
     if user.has_role?(:admin)
       can :manage, :all
+    end
+
+    if user.has_role?(:video_reader)
+      can :read, Video
+    end
+
+    if user.has_role?(:document_reader)
+      can :read, Document
     end
 
     # The first argument to `can` is the action you are giving the user

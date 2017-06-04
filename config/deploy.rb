@@ -1,6 +1,7 @@
 # cap production deploy
 # require "rvm/capistrano"
 # https://stackoverflow.com/questions/29547314/how-to-restart-puma-after-deploy
+# Only have to restart the puma servers after puma config changes?
 # cap production deploy:restart
 # bundle exec pumactl -P /home/deploy/.pids/puma.pid restart
 # Change these

@@ -1,4 +1,6 @@
+# Server commands for rails console
 # bundle install --without development test
+# RAILS_ENV=production bundle exec rails c
 source 'https://rubygems.org'
 ruby '2.4.1'
 
