@@ -13,12 +13,13 @@
     <div>Currently waiting confirmation for: <%= resource.unconfirmed_email %></div>
   <% end %>
 
-
+<!-- 
   <div class="field">
     <label>Attachments</label>
   <%= f.collection_select :attachment_ids, Attachment.all, :id, :filename, {}, { multiple: true } %>
   </div>
 
+ -->
   <div class="actions">
     <%= f.submit "Update" %>
   </div>
