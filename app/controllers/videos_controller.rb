@@ -14,6 +14,7 @@ class VideosController < ApplicationController
   end
 
   def download
+    authorize! :show, @video
     send_data(@video.file_contents,
               type: @video.content_type,
               filename: @video.filename)

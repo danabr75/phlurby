@@ -22,6 +22,8 @@ class AttachmentsController < ApplicationController
   end
 
   def download
+    # authorize! :download, @attachment
+    authorize! :show, @attachment
     send_data(@attachment.file_contents,
               type: @attachment.content_type,
               filename: @attachment.filename)

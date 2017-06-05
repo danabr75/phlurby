@@ -19,6 +19,9 @@ class Ability
       user.attachments.include?(a)
     end
 
+    # can :download, Attachment do |a|
+    #   user.attachments.include?(a)
+    # end
 
     if user.has_role?(:admin)
       can :manage, :all

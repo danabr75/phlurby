@@ -14,6 +14,7 @@ class DocumentsController < ApplicationController
   end
 
   def download
+    authorize! :show, @document
     send_data(@document.file_contents,
               type: @document.content_type,
               filename: @document.filename)
