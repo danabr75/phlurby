@@ -112,7 +112,9 @@ namespace :deploy do
   desc 'Copy DB'
   task :copy_sqlite do
     on roles(:app) do
-      run "cp #{current_path}/db/production.sqlite3 #{release_path}/db/"
+      puts "CURRENT PATH: #{current_path}"
+      puts "RELEASE PATH: #{release_path}"
+      execute "cp #{current_path}/db/production.sqlite3 #{release_path}/db/"
     end
   end
 
