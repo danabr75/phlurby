@@ -1,11 +1,19 @@
 class AttachmentsController < ApplicationController
-  load_and_authorize_resource
+  load_and_authorize_resource :user
+  load_and_authorize_resource :attachment, through: :user, shallow: true
+
+  # load_and_authorize_resource :user
+  # load_and_authorize_resource through: :user
   # before_action :set_attachment, only: [:show, :edit, :update, :destroy, :download]
 
   # GET /documents
   # GET /documents.json
   def index
-    @attachments = Attachment.all
+    if can? :manage, Attachment
+      @attachments = Attachment.all
+    else
+      @attachments = @user.attachments
+    end
   end
 
   # GET /documents/1
