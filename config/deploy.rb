@@ -109,7 +109,13 @@ namespace :deploy do
     end
   end
 
+  desc 'Copy DB'
+  task :copy_sqlite, roles: :app do
+      run "cp #{current_path}/db/production.sqlite3 #{release_path}/db/"
+  end
+
   before :starting,     :check_revision
+  after  :starting,     :copy_sqlite
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
   after  :finishing,    :restart
