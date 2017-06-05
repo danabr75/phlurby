@@ -119,7 +119,7 @@ namespace :deploy do
   end
 
   before :starting,     :check_revision
-  after  :starting,     :copy_sqlite
+  after  :finishing,     :copy_sqlite
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
   after  :finishing,    :restart
