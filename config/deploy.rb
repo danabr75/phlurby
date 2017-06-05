@@ -109,7 +109,7 @@ namespace :deploy do
     end
   end
 
-  desc 'Copy DB'
+  desc "Copy DB - doesn't work."
   task :copy_sqlite do
     on roles(:app) do
       puts "CURRENT PATH: #{current_path}"
@@ -119,7 +119,7 @@ namespace :deploy do
   end
 
   before :starting,     :check_revision
-  after  :finishing,     :copy_sqlite
+  # after  :finishing,     :copy_sqlite
   after  :finishing,    :compile_assets
   after  :finishing,    :cleanup
   after  :finishing,    :restart
