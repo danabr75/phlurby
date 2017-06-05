@@ -1,0 +1,41 @@
+<p id="notice"><%= notice %></p>
+
+<h1>My Attachments (index)</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Filename</th>
+      <th colspan="3">Type</th>
+      <th colspan="3"></th>
+      <th colspan="3"></th>
+      <th colspan="3"></th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @attachments.each do |attachment| %>
+      <tr>
+        <td><%= attachment.filename %></td>
+        <td><%= attachment.type %></td>
+        <% if can? :read, attachment %>
+        <td><%= link_to 'Show', attachment %></td>
+        <% end %>
+        <% if can? :edit, attachment %>
+        <td><%= link_to 'Edit', edit_attachment_path(attachment) %></td>
+        <% end %>
+        <% if can? :read, attachment %>
+        <td><%= link_to 'Download', download_attachment_path(attachment) %></td>
+        <% end %>
+        <% if can? :destroy, attachment %>
+        <td><%= link_to 'Destroy', attachment, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%#= link_to 'New Document', new_document_path %>

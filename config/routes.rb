@@ -35,9 +35,11 @@ Rails.application.routes.draw do
   # end
   # resources :users, :only => [:show]
 
-  resources :users, only: [:index, :disable, :renable, :attachments, :show, :update, :edit] do
+  # resources :users, only: [:index, :disable, :renable, :attachments, :show, :update, :edit] do
+  resources :users, only: [:index, :disable, :renable, :show, :update, :edit] do
+    resources :attachments
     member do
-      get :attachments
+      # get :attachments
       post :disable
       post :renable
     end

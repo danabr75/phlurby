@@ -16,7 +16,7 @@ class Ability
     can [:read, :update, :destroy], User, :id => user.try(:id)
 
     can :read, Attachment do |a|
-      u.attachments.include?(a)
+      user.attachments.include?(a)
     end
 
 
