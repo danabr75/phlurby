@@ -211,8 +211,11 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
     @enemy_bullets.each do |bullet|
       # bullet.hit_stars(@stars)
-      bullet.hit_objects([@player])
-
+      hit_player = bullet.hit_object(@player)
+      if hit_player > 0
+        puts "hit_player: #{hit_player}"
+        @player.health -= hit_player
+      end
     end
     @enemy_bullets.reject! { |bullet| !bullet.update }
 

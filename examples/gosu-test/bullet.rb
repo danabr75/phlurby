@@ -1,5 +1,6 @@
 class Bullet
   attr_reader :x, :y
+  DAMAGE = 5
   COOLDOWN_DELAY = 30
   
   def initialize(player, side)
@@ -40,7 +41,7 @@ class Bullet
     objects.reject! do |object|
       if Gosu.distance(@x, @y, object.x, object.y) < 30
         # puts "HIT STAR!!"
-        # @y = 0
+        @y = 0
         # @score += 10
         # stop that!
         # @beep.play
@@ -49,6 +50,21 @@ class Bullet
         false
       end
     end
+  end
+
+
+  def hit_object(object)
+    return_value = nil
+    if Gosu.distance(@x, @y, object.x, object.y) < 30
+      # puts "1"
+      @y = 0
+      return_value = DAMAGE
+    else
+      # puts "2"
+      return_value = 0
+    end
+    # puts "rEUTRINING: #{return_value}"
+    return return_value
   end
 
 

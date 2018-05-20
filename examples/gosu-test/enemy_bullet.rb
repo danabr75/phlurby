@@ -1,6 +1,5 @@
 require_relative 'bullet.rb'
 class EnemyBullet < Bullet
-  attr_reader :x, :y
   COOLDOWN_DELAY = 30
   
   def initialize(player)
