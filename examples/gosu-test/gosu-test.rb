@@ -25,6 +25,9 @@
 require 'rubygems'
 require 'gosu'
 require 'gl'
+require_relative 'star.rb'
+require_relative 'bullet.rb'
+require_relative 'player.rb'
 
 WIDTH, HEIGHT = 640, 480
 
@@ -125,158 +128,6 @@ class GLBackground
   end
 end
 
-# Roughly adapted from the tutorial game. Always faces north.
-class Player
-  Speed = 7
-  
-  attr_reader :score
-
-  def initialize(x, y)
-    @image = Gosu::Image.new("media/starfighter.bmp")
-    @beep = Gosu::Sample.new("media/beep.wav")
-    @x, @y = x, y
-    @score = 0
-  end
-
-  def get_x
-    @x
-  end
-  def get_y
-    @y
-  end
-
-  def get_height
-    @image.height
-  end
-
-  def get_width
-    @image.width
-  end
-
-  def move_left
-    @x = [@x - Speed, 0].max
-  end
-  
-  def move_right
-    @x = [@x + Speed, WIDTH].min
-  end
-  
-  def accelerate
-    @y = [@y - Speed, 50].max
-  end
-  
-  def brake
-    @y = [@y + Speed, HEIGHT].min
-  end
-
-  def attack bullets, animation, player
-    return [
-      Bullet.new(animation, player, 'left'),
-      Bullet.new(animation, player, 'right')
-    ]
-  end
-  
-  def draw
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
-  end
-  
-  def collect_stars(stars)
-    stars.reject! do |star|
-      if Gosu.distance(@x, @y, star.x, star.y) < 35
-        @score += 10
-        # stop that!
-        # @beep.play
-        true
-      else
-        false
-      end
-    end
-  end
-
-
-end
-
-# Also taken from the tutorial, but drawn with draw_rot and an increasing angle
-# for extra rotation coolness!
-class Star
-  attr_reader :x, :y
-  
-  def initialize(animation)
-    @animation = animation
-    @color = Gosu::Color.new(0xff_000000)
-    @color.red = rand(255 - 40) + 40
-    @color.green = rand(255 - 40) + 40
-    @color.blue = rand(255 - 40) + 40
-    @x = rand * 800
-    @y = 0
-  end
-
-  def draw  
-    img = @animation[Gosu.milliseconds / 100 % @animation.size];
-    img.draw_rot(@x, @y, ZOrder::Stars, @y, 0.5, 0.5, 1, 1, @color, :add)
-  end
-  
-  def update
-    # Move towards bottom of screen
-    @y += 3
-    # Return false when out of screen (gets deleted then)
-    @y < 650
-  end
-end
-
-class Bullet
-  attr_reader :x, :y
-  
-  def initialize(animation, player, side)
-    @animation = animation
-    # @color = Gosu::Color.new(0xff_000000)
-    # @color.red = rand(255 - 40) + 40
-    # @color.green = rand(255 - 40) + 40
-    # @color.blue = rand(255 - 40) + 40
-    if side == 'left'
-      @x = player.get_x - (player.get_width / 2)
-      @y = player.get_y# - player.get_height
-    else
-      @x = (player.get_x + player.get_width / 2) - 4
-      @y = player.get_y# - player.get_height
-    end
-  end
-
-  def draw
-    # puts Gosu.milliseconds
-    # puts @animation.size
-    # puts 100 % @animation.size
-    # puts "Gosu.milliseconds / 100 % @animation.size: #{Gosu.milliseconds / 100 % @animation.size}"
-    img = @animation;
-    # img.draw(@x, @y, ZOrder::Bullets, :add)
-    img.draw(@x, @y, ZOrder::Bullets, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
-    # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
-  end
-  
-  def update
-    @y -= 6
-
-    # Return false when out of screen (gets deleted then)
-    @y > 0
-  end
-
-  
-  def hit_stars(stars)
-    stars.reject! do |star|
-      if Gosu.distance(@x, @y, star.x, star.y) < 35
-        # puts "HIT STAR!!"
-        @y = 0
-        # @score += 10
-        # stop that!
-        # @beep.play
-        true
-      else
-        false
-      end
-    end
-  end
-
-end
 
 class OpenGLIntegration < (Example rescue Gosu::Window)
   def initialize
@@ -301,14 +152,20 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
   end
   
   def update
+    @player.cooldown_wait -= 1 if @player.cooldown_wait > 0
     @player.move_left  if Gosu.button_down? Gosu::KB_LEFT  or Gosu.button_down? Gosu::GP_LEFT
     @player.move_right if Gosu.button_down? Gosu::KB_RIGHT or Gosu.button_down? Gosu::GP_RIGHT
     @player.accelerate if Gosu.button_down? Gosu::KB_UP    or Gosu.button_down? Gosu::GP_UP
     @player.brake      if Gosu.button_down? Gosu::KB_DOWN  or Gosu.button_down? Gosu::GP_DOWN
+
     if Gosu.button_down? Gosu::KB_SPACE
-      bullets = @player.attack(@bullets, @bullet_anim, @player)
-      bullets.each do |bullet|
-        @bullets.push(bullet)
+      if @player.cooldown_wait <= 0
+        bullets = @player.attack(@bullets, @bullet_anim, @player)
+        @player.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(@player.attack_speed)
+
+        bullets.each do |bullet|
+          @bullets.push(bullet)
+        end
       end
     end
     
@@ -331,6 +188,7 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @bullets.each { |bullet| bullet.draw }
     @stars.each { |star| star.draw }
     @font.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)
   end
 end
