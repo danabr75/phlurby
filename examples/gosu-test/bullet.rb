@@ -50,5 +50,21 @@ class Bullet
       end
     end
   end
+  
+  def hit_enemies(enemies)
+    enemies.reject! do |enemy|
+      if Gosu.distance(@x, @y, enemy.x, enemy.y) < 30
+        # puts "HIT STAR!!"
+        # @y = 0
+        # @score += 10
+        # stop that!
+        # @beep.play
+        true
+      else
+        false
+      end
+    end
+  end
+
 
 end

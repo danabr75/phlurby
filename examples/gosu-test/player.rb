@@ -2,7 +2,7 @@ class Player
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
   attr_reader :score
-  attr_accessor :cooldown_wait, :attack_speed
+  attr_accessor :cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
   def initialize(x, y)
     @image = Gosu::Image.new("media/starfighter.bmp")
@@ -11,6 +11,8 @@ class Player
     @score = 0
     @cooldown_wait = 0
     @attack_speed = 1
+    @health = 100
+    @armor = 0
   end
 
   def get_x
@@ -18,6 +20,10 @@ class Player
   end
   def get_y
     @y
+  end
+
+  def is_alive
+    health >= 0
   end
 
   def get_height
@@ -44,7 +50,7 @@ class Player
     @y = [@y + Speed, HEIGHT].min
   end
 
-  def attack bullets, animation, player
+  def attack animation, player
     return [
       Bullet.new(animation, player, 'left'),
       Bullet.new(animation, player, 'right')
