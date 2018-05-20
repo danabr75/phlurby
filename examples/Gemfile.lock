@@ -1,0 +1,34 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    ast (2.4.0)
+    gosu (0.13.3)
+    gosu-examples (1.0.4)
+      gosu (>= 0.11.0)
+    hike (1.2.3)
+    opal (0.11.0)
+      ast (>= 2.3.0)
+      hike (~> 1.2)
+      parser (= 2.3.3.1)
+      sourcemap (~> 0.1.0)
+    opengl (0.10.0)
+    parser (2.3.3.1)
+      ast (~> 2.2)
+    ruby2d (0.5.1)
+      opal (~> 0.11)
+    sourcemap (0.1.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  gosu
+  gosu-examples
+  opengl
+  ruby2d
+
+RUBY VERSION
+   ruby 2.2.4p230
+
+BUNDLED WITH
+   1.16.2
