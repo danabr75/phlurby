@@ -18,9 +18,9 @@ class EnemyPlayer < Player
     @armor = 0
   end
 
-  def attack animation, player
+  def attack
     return [
-      EnemyBullet.new(animation, player)
+      EnemyBullet.new(self)
     ]
   end
   

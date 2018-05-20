@@ -1,9 +1,9 @@
-class Bullet
+class Missile
   attr_reader :x, :y
   COOLDOWN_DELAY = 30
   
-  def initialize(player, side)
-    @animation = Gosu::Image.new("media/bullet-mini.png")
+  def initialize(animation, player, side)
+    @animation = animation
     # @color = Gosu::Color.new(0xff_000000)
     # @color.red = rand(255 - 40) + 40
     # @color.green = rand(255 - 40) + 40
@@ -35,10 +35,25 @@ class Bullet
     @y > 0
   end
 
-
-  def hit_objects(objects)
-    objects.reject! do |object|
-      if Gosu.distance(@x, @y, object.x, object.y) < 30
+  
+  def hit_stars(stars)
+    stars.reject! do |star|
+      if Gosu.distance(@x, @y, star.x, star.y) < 35
+        # puts "HIT STAR!!"
+        @y = 0
+        # @score += 10
+        # stop that!
+        # @beep.play
+        true
+      else
+        false
+      end
+    end
+  end
+  
+  def hit_enemies(enemies)
+    enemies.reject! do |enemy|
+      if Gosu.distance(@x, @y, enemy.x, enemy.y) < 30
         # puts "HIT STAR!!"
         # @y = 0
         # @score += 10

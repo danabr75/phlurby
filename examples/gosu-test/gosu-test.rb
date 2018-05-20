@@ -25,8 +25,10 @@
 require 'rubygems'
 require 'gosu'
 require 'gl'
+require 'rmagick'
 require_relative 'star.rb'
 require_relative 'bullet.rb'
+require_relative 'missile.rb'
 require_relative 'player.rb'
 require_relative 'enemy_player.rb'
 
@@ -131,6 +133,12 @@ end
 
 
 class OpenGLIntegration < (Example rescue Gosu::Window)
+
+  # def button_down(id)
+  #   puts "HERE: #{id.inspect}"
+  #   super(id)
+  # end
+
   def initialize
     super WIDTH, HEIGHT
     
@@ -140,10 +148,10 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     
     @player = Player.new(400, 500)
     
-    @star_anim = Gosu::Image::load_tiles("media/star.png", 25, 25)
+    # @star_anim = Gosu::Image::load_tiles("media/star.png", 25, 25)
     # @bullet_anim = Gosu::Image::load_tiles("media/bullet.png", 25, 25)
     # @bullet_anim = Gosu::Image::load_tiles("media/bullet.png", 25, 25)
-    @bullet_anim = Gosu::Image.new("media/bullet-mini.png")
+    # @bullet_anim = Gosu::Image.new("media/bullet-mini.png")
     # puts "star_anim size: #{@star_anim.size}"
     # puts "bullet_anim size: #{@bullet_anim.size}"
     @stars = Array.new
@@ -155,6 +163,11 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @font = Gosu::Font.new(20)
     @max_enemies = 12
   end
+
+
+  def needs_cursor?
+    true
+  end
   
   def update
     @player.cooldown_wait -= 1 if @player.cooldown_wait > 0
@@ -163,9 +176,21 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @player.accelerate if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
     @player.brake      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
 
+    if Gosu.button_down?(Gosu::MS_LEFT)
+      # puts "MOUSE CLICK"
+      if @player.cooldown_wait <= 0
+        bullets = @player.attack()
+        @player.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(@player.attack_speed)
+
+        bullets.each do |bullet|
+          @bullets.push(bullet)
+        end
+      end
+    end
+
     if Gosu.button_down?(Gosu::KB_SPACE)
       if @player.cooldown_wait <= 0
-        bullets = @player.attack(@bullet_anim, @player)
+        bullets = @player.attack()
         @player.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(@player.attack_speed)
 
         bullets.each do |bullet|
@@ -177,8 +202,8 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @player.collect_stars(@stars)
 
     @bullets.each do |bullet|
-      bullet.hit_stars(@stars)
-      bullet.hit_enemies(@enemies)
+      bullet.hit_objects(@stars)
+      bullet.hit_objects(@enemies)
     end
     
     @stars.reject! { |star| !star.update }
@@ -186,7 +211,7 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
     @enemy_bullets.each do |bullet|
       # bullet.hit_stars(@stars)
-      bullet.hit_player(@player)
+      bullet.hit_objects([@player])
 
     end
     @enemy_bullets.reject! { |bullet| !bullet.update }
@@ -194,14 +219,14 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
     @gl_background.scroll
     
-    @stars.push(Star.new(@star_anim)) if rand(75) == 0
+    @stars.push(Star.new()) if rand(75) == 0
 
     @enemies.push(EnemyPlayer.new(rand(WIDTH), 25 )) if rand(100) == 0 && @enemies.count <= @max_enemies
 
     @enemies.each do |enemy|
       enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
       if enemy.cooldown_wait <= 0
-        bullets = enemy.attack(@bullet_anim, enemy)
+        bullets = enemy.attack()
         enemy.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(enemy.attack_speed)
 
         bullets.each do |bullet|
@@ -214,7 +239,7 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
   def draw
     @player.draw if @player.is_alive
-    @font.draw("You are dead!", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if ~@player.is_alive
+    @font.draw("You are dead!", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @enemies.each { |enemy| enemy.draw }
     @bullets.each { |bullet| bullet.draw }
     @enemy_bullets.each { |bullet| bullet.draw }

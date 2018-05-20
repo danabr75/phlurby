@@ -14,6 +14,7 @@ GEM
     opengl (0.10.0)
     parser (2.3.3.1)
       ast (~> 2.2)
+    rmagick (2.16.0)
     ruby2d (0.5.1)
       opal (~> 0.11)
     sourcemap (0.1.1)
@@ -25,6 +26,7 @@ DEPENDENCIES
   gosu
   gosu-examples
   opengl
+  rmagick
   ruby2d
 
 RUBY VERSION

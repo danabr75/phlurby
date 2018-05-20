@@ -5,6 +5,8 @@ gem 'ruby2d'
 gem 'gosu'
 gem 'gosu-examples'
 gem 'opengl'
+# gem 'texplay'
+gem 'rmagick'
 
 # Project of the Day screenshot
 # Discover more awesome projects in the Gosu Showcase.
