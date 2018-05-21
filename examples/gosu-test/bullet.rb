@@ -3,7 +3,7 @@ class Bullet
   DAMAGE = 5
   COOLDOWN_DELAY = 30
   
-  def initialize(player, side)
+  def initialize(player, side = nil)
     @animation = Gosu::Image.new("media/bullet-mini.png")
     # @color = Gosu::Color.new(0xff_000000)
     # @color.red = rand(255 - 40) + 40
@@ -29,7 +29,7 @@ class Bullet
     # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
   end
   
-  def update
+  def update mouse_x, mouse_y
     @y -= 6
 
     # Return false when out of screen (gets deleted then)
@@ -41,7 +41,7 @@ class Bullet
     objects.reject! do |object|
       if Gosu.distance(@x, @y, object.x, object.y) < 30
         # puts "HIT STAR!!"
-        @y = 0
+        @y = -50
         # @score += 10
         # stop that!
         # @beep.play

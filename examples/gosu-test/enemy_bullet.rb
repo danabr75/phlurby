@@ -22,7 +22,7 @@ class EnemyBullet < Bullet
     img.draw_rot(@x, @y, ZOrder::Bullets, 180)
   end
   
-  def update
+  def update mouse_x, mouse_y
     @y += 6
 
     # Return false when out of screen (gets deleted then)

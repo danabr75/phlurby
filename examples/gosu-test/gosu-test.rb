@@ -32,11 +32,12 @@ require_relative 'enemy_bullet.rb'
 require_relative 'missile.rb'
 require_relative 'player.rb'
 require_relative 'enemy_player.rb'
+require_relative 'cursor.rb'
 
 WIDTH, HEIGHT = 640, 480
 
 module ZOrder
-  Background, Stars, Bullets, Player, UI = *0..4
+  Background, Cursor, Stars, Bullets, Player, UI = *0..5
 end
 
 # The only really new class here.
@@ -133,7 +134,7 @@ class GLBackground
 end
 
 
-class OpenGLIntegration < (Example rescue Gosu::Window)
+class OpenGLIntegration < Gosu::Window
 
   # def button_down(id)
   #   puts "HERE: #{id.inspect}"
@@ -163,20 +164,43 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     
     @font = Gosu::Font.new(20)
     @max_enemies = 12
+
+    # @cursor = Gosu::Image.new(self, 'media/crosshair.png')
+    # @pointer = Gosu::Image.new(self,"media/crosshair.png")
+
+    # pointer = Magick::Image::read("media/crosshair.png").first.resize(0.3)
+    # @pointer = Gosu::Image.new(pointer, :tileable => true)
+
+    @pointer = Cursor.new
+    # @pointer = Gosu::Image.new("media/bullet-mini.png")
+    # @px = 0
+    # @py = 0
   end
 
+  # def update
+  #   @px = mouse_x # this method returns the x coordinate of the mouse
+  #   @py = mouse_y # this method returns the y coordinate of the mouse
+  # end
+  
+  # def draw
+  #   @pointer.draw(@px,@py,0) # we're drawing the mouse at the current position
+  # end
 
-  def needs_cursor?
-    true
-  end
+  # def needs_cursor?
+  #   true
+  # end
   
   def update
+    # @px = self.mouse_x # this method returns the x coordinate of the mouse
+    # @py = self.mouse_y # this method returns the y coordinate of the mouse
+    # puts "PX: #{@px} - PY: #{@py}"
+
     if Gosu.button_down?(Gosu::KB_Q)
       close!
     end
 
     if @player.is_alive
-      @player.cooldown_wait -= 1 if @player.cooldown_wait > 0
+      @player.update
       @player.move_left  if Gosu.button_down?(Gosu::KB_LEFT)  || Gosu.button_down?(Gosu::GP_LEFT)    || Gosu.button_down?(Gosu::KB_A)
       @player.move_right if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::GP_RIGHT)   || Gosu.button_down?(Gosu::KB_D)
       @player.accelerate if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
@@ -184,10 +208,11 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
       if Gosu.button_down?(Gosu::MS_LEFT)
         # puts "MOUSE CLICK"
-        if @player.cooldown_wait <= 0
-          projectiles = @player.attack[:projectiles]
-          cooldown = @player.attack[:cooldown]
-          @player.cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
+        if @player.secondary_cooldown_wait <= 0
+          results = @player.secondary_attack
+          projectiles = results[:projectiles]
+          cooldown = results[:cooldown]
+          @player.secondary_cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
 
           projectiles.each do |projectile|
             @projectiles.push(projectile)
@@ -197,7 +222,9 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
       if Gosu.button_down?(Gosu::KB_SPACE)
         if @player.cooldown_wait <= 0
-          projectiles, cooldown = @player.secondary_attack
+          results = @player.attack
+          projectiles = results[:projectiles]
+          cooldown = results[:cooldown]
           @player.cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
 
           projectiles.each do |projectile|
@@ -224,9 +251,9 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     end
     
     @stars.reject! { |star| !star.update }
-    @projectiles.reject! { |projectile| !projectile.update }
+    @projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
 
-    @enemy_projectiles.reject! { |projectile| !projectile.update }
+    @enemy_projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
 
 
     @gl_background.scroll
@@ -238,8 +265,9 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @enemies.each do |enemy|
       enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
       if enemy.cooldown_wait <= 0
-        projectiles = enemy.attack[:projectiles]
-        cooldown = enemy.attack[:cooldown]
+        results = enemy.attack
+        projectiles = results[:projectiles]
+        cooldown = results[:cooldown]
         enemy.cooldown_wait = cooldown.to_f.fdiv(enemy.attack_speed)
 
         projectiles.each do |projectile|
@@ -251,11 +279,13 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
   end
 
   def draw
+    @pointer.draw(self.mouse_x, self.mouse_y)
+
     @player.draw if @player.is_alive
     @font.draw("You are dead! Press Q to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @enemies.each { |enemy| enemy.draw }
-    @projectiles.each { |projectile| projectile.draw }
-    @enemy_projectiles.each { |projectile| projectile.draw }
+    @projectiles.each { |projectile| projectile.draw() }
+    @enemy_projectiles.each { |projectile| projectile.draw() }
     @stars.each { |star| star.draw }
     @font.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)

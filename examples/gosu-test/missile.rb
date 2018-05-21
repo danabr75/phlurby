@@ -2,11 +2,19 @@ class Missile
   attr_reader :x, :y, :time_alive
   COOLDOWN_DELAY = 30
   MAX_SPEED      = 25
-  STARTING_SPEED = 1.2
+  STARTING_SPEED = 0.0
+  INITIAL_DELAY  = 2
+  SPEED_INCREASE_FACTOR = 0.5
   DAMAGE = 50
   
-  def initialize(object, side)
-    @animation = Gosu::Image.new("media/missile.png")
+  MAX_CURSOR_FOLLOW = 2.5
+
+  def initialize(object, side = nil)
+
+    animation = Magick::Image::read("media/missile.png").first.resize(0.3)
+    @animation = Gosu::Image.new(animation, :tileable => true)
+
+    # @animation = Gosu::Image.new("media/missile.png")
     # @color = Gosu::Color.new(0xff_000000)
     # @color.red = rand(255 - 40) + 40
     # @color.green = rand(255 - 40) + 40
@@ -35,10 +43,28 @@ class Missile
     # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
   end
   
-  def update
-    new_speed = STARTING_SPEED * @time_alive
-    new_speed = MAX_SPEED if new_speed > MAX_SPEED
-    @y -= new_speed
+  def update mouse_x, mouse_y
+    if @time_alive > INITIAL_DELAY
+      new_speed = STARTING_SPEED + (@time_alive * SPEED_INCREASE_FACTOR)
+      new_speed = MAX_SPEED if new_speed > MAX_SPEED
+      @y -= new_speed
+    end
+
+    # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
+    if @x > mouse_x
+      difference = @x - mouse_x
+      if difference > MAX_CURSOR_FOLLOW
+        difference = MAX_CURSOR_FOLLOW
+      end
+      @x = @x - difference
+    else
+      # Cursor is right of the missle, missile needs to go right. @x needs to get bigger. @x is smaller than mouse_x
+      difference = mouse_x - @x
+      if difference > MAX_CURSOR_FOLLOW
+        difference = MAX_CURSOR_FOLLOW
+      end
+      @x = @x + difference
+    end
 
     # Return false when out of screen (gets deleted then)
     @time_alive += 1
@@ -50,7 +76,7 @@ class Missile
   def hit_objects(objects)
     objects.reject! do |object|
       if Gosu.distance(@x, @y, object.x, object.y) < 30
-        @y = 0
+        @y = -50
         true
       else
         false
@@ -62,7 +88,7 @@ class Missile
   def hit_object(object)
     return_value = nil
     if Gosu.distance(@x, @y, object.x, object.y) < 30
-      @y = 0
+      @y = -50
       return_value = DAMAGE
     else
       return_value = 0

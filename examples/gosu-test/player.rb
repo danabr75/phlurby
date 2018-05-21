@@ -5,7 +5,7 @@ class Player
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
   attr_reader :score
-  attr_accessor :cooldown_wait, :cooldown_missile_wait, :attack_speed, :health, :armor, :x, :y
+  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
   def initialize(x, y)
     # @image = Gosu::Image.new("media/spaceship.png", :tileable => true)
@@ -27,7 +27,7 @@ class Player
     @x, @y = x, y
     @score = 0
     @cooldown_wait = 0
-    @cooldown_missile_wait = 0
+    @secondary_cooldown_wait = 0
     @attack_speed = 1
     @health = 100
     @armor = 0
@@ -75,17 +75,23 @@ class Player
       cooldown: Bullet::COOLDOWN_DELAY
     }
   end
+
   def secondary_attack
-    return [
-      Bullet.new(self, 'left'),
-      Bullet.new(self, 'right')
-    ]
+    return {
+      projectiles: [Missile.new(self)],
+      cooldown: Missile::COOLDOWN_DELAY
+    }
   end
 
   def draw
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
   end
   
+  def update
+    self.cooldown_wait -= 1 if self.cooldown_wait > 0
+    self.secondary_cooldown_wait -= 1 if self.secondary_cooldown_wait > 0
+  end
+
   def collect_stars(stars)
     stars.reject! do |star|
       if Gosu.distance(@x, @y, star.x, star.y) < 35
