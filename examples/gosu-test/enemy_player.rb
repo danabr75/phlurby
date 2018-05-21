@@ -1,5 +1,6 @@
 require_relative 'player.rb'
 require_relative 'enemy_bullet.rb'
+require_relative 'small_explosion.rb'
 
 class EnemyPlayer < Player
   Speed = 3
@@ -7,10 +8,11 @@ class EnemyPlayer < Player
   attr_reader :score
   attr_accessor :cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
-  def initialize(x, y)
+  def initialize(x = nil, y = nil)
     @image = Gosu::Image.new("media/starfighter.bmp")
     @beep = Gosu::Sample.new("media/beep.wav")
-    @x, @y = x, y
+    @x = x || rand(WIDTH)
+    @y = y || 0
     @score = 0
     @cooldown_wait = 0
     @attack_speed = 0.5
@@ -36,6 +38,10 @@ class EnemyPlayer < Player
   end
 
 
+  def drop
+    SmallExplosion.new(@x, @y)
+  end
+
   def draw
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
   end
@@ -45,30 +51,22 @@ class EnemyPlayer < Player
     if is_alive
       if rand(2).even?
         @y += rand(5)
+
+        @y = HEIGHT / 2 if @y > HEIGHT / 2
       else
         @y -= rand(5)
+
+        @y = 0 + @image.height if @y < 0 + @image.height
       end
       if rand(2).even?
         @x += rand(5)
+        @x = WIDTH if @x > WIDTH
       else
         @x -= rand(5)
+        @x = 0 + @image.width if @x < 0 + @image.width
       end
 
-      @y = 0 if @y < 0
-      @y = HEIGHT / 2 if @y > HEIGHT / 2
 
-      @x = 0 if @x < 0
-      @x = WIDTH if @x > WIDTH
-
-      # puts "building is being deleted" if @y < HEIGHT
-      # alive = @y < HEIGHT + @image.height
-
-      # drops = []
-      # if !alive 
-      #   drops << MissilePack.new(@x, @y)
-      # end
-
-      # return {update: alive, drops: drops}
       @y < HEIGHT + @image.height
     else
       false

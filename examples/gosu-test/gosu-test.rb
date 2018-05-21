@@ -214,7 +214,7 @@ class OpenGLIntegration < Gosu::Window
       if Gosu.button_down?(Gosu::MS_LEFT)
         # puts "MOUSE CLICK"
         if @player.secondary_cooldown_wait <= 0 && @player.rockets > 0
-          results = @player.secondary_attack
+          results = @player.secondary_attack(self.mouse_x, self.mouse_y)
           projectiles = results[:projectiles]
           cooldown = results[:cooldown]
           @player.secondary_cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
@@ -228,7 +228,7 @@ class OpenGLIntegration < Gosu::Window
 
       if Gosu.button_down?(Gosu::KB_SPACE)
         if @player.cooldown_wait <= 0
-          results = @player.attack
+          results = @player.attack(self.mouse_x, self.mouse_y)
           projectiles = results[:projectiles]
           cooldown = results[:cooldown]
           @player.cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
@@ -284,7 +284,7 @@ class OpenGLIntegration < Gosu::Window
     # @buildings.push(Building.new()) if rand(500) == 0
     @buildings.push(Building.new()) if rand(100) == 0
 
-    @enemies.push(EnemyPlayer.new(rand(WIDTH), 25 )) if rand(100) == 0 && @enemies.count <= @max_enemies
+    @enemies.push(EnemyPlayer.new()) if rand(100) == 0 && @enemies.count <= @max_enemies
 
     # Move to enemy mehtods
     @enemies.each do |enemy|

@@ -22,7 +22,7 @@ class Building
 
     @image = Gosu::Image.new(image, :tileable => true)
     @x = rand * 800
-    @y = 0
+    @y = 0 - @image.height
     # puts "NEW BUILDING: #{@x} and #{@y}"
     @health = 15
     @armor = 0

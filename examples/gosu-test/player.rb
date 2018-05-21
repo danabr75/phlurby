@@ -70,16 +70,16 @@ class Player
   end
 
 
-  def attack
+  def attack mouse_x = nil, mouse_y = nil
     return {
       projectiles: [Bullet.new(self, 'left'), Bullet.new(self, 'right')],
       cooldown: Bullet::COOLDOWN_DELAY
     }
   end
 
-  def secondary_attack
+  def secondary_attack mouse_x = nil, mouse_y = nil
     return {
-      projectiles: [Missile.new(self)],
+      projectiles: [Missile.new(self, mouse_x, mouse_y)],
       cooldown: Missile::COOLDOWN_DELAY
     }
   end

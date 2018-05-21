@@ -1,5 +1,5 @@
 class Missile
-  attr_reader :x, :y, :time_alive
+  attr_reader :x, :y, :time_alive, :mouse_start_x, :mouse_start_y
   COOLDOWN_DELAY = 30
   MAX_SPEED      = 25
   STARTING_SPEED = 0.0
@@ -7,9 +7,9 @@ class Missile
   SPEED_INCREASE_FACTOR = 0.5
   DAMAGE = 50
   
-  MAX_CURSOR_FOLLOW = 2.5
+  MAX_CURSOR_FOLLOW = 4
 
-  def initialize(object, side = nil)
+  def initialize(object, mouse_x = nil, mouse_y = nil, side = nil)
 
     animation = Magick::Image::read("media/missile.png").first.resize(0.3)
     @animation = Gosu::Image.new(animation, :tileable => true)
@@ -30,6 +30,8 @@ class Missile
       @y = object.get_y
     end
     @time_alive = 0
+    @mouse_start_x = mouse_x
+    @mouse_start_y = mouse_y
   end
 
   def draw
@@ -43,7 +45,9 @@ class Missile
     # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
   end
   
-  def update mouse_x, mouse_y
+  def update mouse_x = nil, mouse_y = nil
+    mouse_x = @mouse_start_x
+    mouse_y = @mouse_start_y
     if @time_alive > INITIAL_DELAY
       new_speed = STARTING_SPEED + (@time_alive * SPEED_INCREASE_FACTOR)
       new_speed = MAX_SPEED if new_speed > MAX_SPEED
@@ -51,6 +55,8 @@ class Missile
     end
 
     # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
+    puts "@XL #{@x}"
+    puts "mouse_x #{mouse_x}"
     if @x > mouse_x
       difference = @x - mouse_x
       if difference > MAX_CURSOR_FOLLOW
