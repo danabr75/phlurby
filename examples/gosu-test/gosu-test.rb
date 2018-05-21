@@ -34,6 +34,7 @@ require_relative 'player.rb'
 require_relative 'enemy_player.rb'
 require_relative 'cursor.rb'
 require_relative 'building.rb'
+require_relative 'grappling_hook.rb'
 
 WIDTH, HEIGHT = 640, 480
 
@@ -152,6 +153,7 @@ class OpenGLIntegration < Gosu::Window
     @gl_background = GLBackground.new
     
     @player = Player.new(400, 500)
+    @grappling_hook = nil
     
     # @star_anim = Gosu::Image::load_tiles("media/star.png", 25, 25)
     # @projectile_anim = Gosu::Image::load_tiles("media/projectile.png", 25, 25)
@@ -211,6 +213,33 @@ class OpenGLIntegration < Gosu::Window
       @player.accelerate if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
       @player.brake      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
 
+      if Gosu.button_down?(Gosu::MS_RIGHT)
+        puts "MOUSE CLICK - MS_RIGHT"
+        if @grappling_hook == nil
+          puts "CREAITNG NEW GRAPPLE"
+          @grappling_hook = GrapplingHook.new(@player)
+        # else
+          # @grappling_hook.activate
+        end
+      end
+
+      # Gosu::Window#button_up
+      def button_up id
+        # super
+        if (id == Gosu::MS_RIGHT)
+          # puts "MOUSE CLICK"
+          # @grappling_hook = nil
+          puts "DEACTIVATE GRAPPLE"
+          @grappling_hook.deactivate
+          puts "AFTER WARDS: #{@grappling_hook.active}"
+        end
+      end
+      # if button_up?(Gosu::MS_RIGHT)
+      #   # puts "MOUSE CLICK"
+      #   @grappling_hook = nil
+      # end
+
+
       if Gosu.button_down?(Gosu::MS_LEFT)
         # puts "MOUSE CLICK"
         if @player.secondary_cooldown_wait <= 0 && @player.rockets > 0
@@ -250,6 +279,9 @@ class OpenGLIntegration < Gosu::Window
           @player.health -= hit_player
         end
       end
+
+
+      @grappling_hook.collect_pickups(@player, @pickups) if @grappling_hook && @grappling_hook.active
     end
 
     @projectiles.each do |projectile|
@@ -257,9 +289,18 @@ class OpenGLIntegration < Gosu::Window
       @pickups = @pickups + projectile.hit_objects(@enemies)
       @pickups = @pickups + projectile.hit_objects(@buildings)
     end
+
+
+    
     
     # @stars.reject! { |star| !star.update }
     @buildings.reject! { |building| !building.update }
+
+    if @player.is_alive && @grappling_hook
+      grap_result = @grappling_hook.update(self.mouse_x, self.mouse_y, @player)
+      puts "Setting grap to nil - #{grap_result}" if !grap_result
+      @grappling_hook = nil if !grap_result
+    end
 
     # @buildings.reject! do |building|
     #   results = building.update
@@ -307,9 +348,10 @@ class OpenGLIntegration < Gosu::Window
   # end
 
   def draw
-    @pointer.draw(self.mouse_x, self.mouse_y)
+    @pointer.draw(self.mouse_x, self.mouse_y) if @grappling_hook.nil? || !@grappling_hook.active
 
     @player.draw if @player.is_alive
+    @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
     @font.draw("You are dead! Press Q to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @enemies.each { |enemy| enemy.draw }
     @projectiles.each { |projectile| projectile.draw() }
