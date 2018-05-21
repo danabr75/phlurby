@@ -30,4 +30,13 @@ class MissilePack
     @y < HEIGHT + @image.height
   end
 
+  def collected_by_player player
+    puts "1 BEFORE player: #{player.inspect}"
+    puts "2 BEFORE player: #{player.rockets}"
+    player.rockets += 25
+    puts "3 AFTER player: #{player.inspect}"
+    puts "4 AFTER player: #{player.rockets}"
+  end
+
+
 end

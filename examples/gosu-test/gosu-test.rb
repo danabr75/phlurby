@@ -213,13 +213,14 @@ class OpenGLIntegration < Gosu::Window
 
       if Gosu.button_down?(Gosu::MS_LEFT)
         # puts "MOUSE CLICK"
-        if @player.secondary_cooldown_wait <= 0
+        if @player.secondary_cooldown_wait <= 0 && @player.rockets > 0
           results = @player.secondary_attack
           projectiles = results[:projectiles]
           cooldown = results[:cooldown]
           @player.secondary_cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
 
           projectiles.each do |projectile|
+            @player.rockets -= 1
             @projectiles.push(projectile)
           end
         end
@@ -239,6 +240,7 @@ class OpenGLIntegration < Gosu::Window
       end
       
       @player.collect_stars(@stars)
+      @player.collect_pickups(@pickups)
 
       @enemy_projectiles.each do |projectile|
         # projectile.hit_stars(@stars)
@@ -319,6 +321,7 @@ class OpenGLIntegration < Gosu::Window
     @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Armor: #{@player.armor}", 10, 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)
   end
 end

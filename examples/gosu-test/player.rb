@@ -5,7 +5,7 @@ class Player
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
   attr_reader :score
-  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y
+  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets
 
   def initialize(x, y)
     # @image = Gosu::Image.new("media/spaceship.png", :tileable => true)
@@ -31,6 +31,7 @@ class Player
     @attack_speed = 1
     @health = 100
     @armor = 0
+    @rockets = 25
   end
 
   def get_x
@@ -107,4 +108,22 @@ class Player
       end
     end
   end
+
+
+  def collect_pickups(pickups)
+    pickups.reject! do |pickup|
+      if Gosu.distance(@x, @y, pickup.x, pickup.y) < 35
+        pickup.collected_by_player(self) if pickup.respond_to?(:collected_by_player)
+
+        # stop that!
+        # @beep.play
+        true
+      else
+        false
+      end
+    end
+  end
+
+
+
 end
