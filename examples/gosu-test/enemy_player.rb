@@ -1,6 +1,7 @@
 require_relative 'player.rb'
 require_relative 'enemy_bullet.rb'
 require_relative 'small_explosion.rb'
+require_relative 'star.rb'
 
 class EnemyPlayer < Player
   Speed = 3
@@ -9,7 +10,9 @@ class EnemyPlayer < Player
   attr_accessor :cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
   def initialize(x = nil, y = nil)
-    @image = Gosu::Image.new("media/starfighter.bmp")
+    image = Magick::Image::read("media/starfighterv4.png").first
+    @image = Gosu::Image.new(image, :tileable => true)
+    # @image = Gosu::Image.new("media/starfighterv2.bmp")
     @beep = Gosu::Sample.new("media/beep.wav")
     @x = x || rand(WIDTH)
     @y = y || 0
@@ -38,12 +41,15 @@ class EnemyPlayer < Player
   end
 
 
-  def drop
-    SmallExplosion.new(@x, @y)
+  def drops
+    [
+      SmallExplosion.new(@x, @y),
+      Star.new(@x, @y)
+    ]
   end
 
   def draw
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
+    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Enemy)
   end
 
   def update

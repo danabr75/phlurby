@@ -22,7 +22,7 @@ class EnemyBullet < Bullet
     img.draw_rot(@x, @y, ZOrder::Bullets, 180)
   end
   
-  def update mouse_x, mouse_y
+  def update mouse_x = nil, mouse_y = nil
     @y += 6
 
     # Return false when out of screen (gets deleted then)
@@ -40,6 +40,19 @@ class EnemyBullet < Bullet
   # end
 
 
+  def hit_object(object)
+    return_value = nil
+    if Gosu.distance(@x, @y, object.x, object.y) < 30
+      # puts "1"
+      @y = HEIGHT
+      return_value = DAMAGE
+    else
+      # puts "2"
+      return_value = 0
+    end
+    # puts "rEUTRINING: #{return_value}"
+    return return_value
+  end
 
   
   # def hit_stars(stars)

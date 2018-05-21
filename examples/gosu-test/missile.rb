@@ -55,8 +55,6 @@ class Missile
     end
 
     # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
-    puts "@XL #{@x}"
-    puts "mouse_x #{mouse_x}"
     if @x > mouse_x
       difference = @x - mouse_x
       if difference > MAX_CURSOR_FOLLOW
@@ -89,9 +87,11 @@ class Missile
           object.take_damage(DAMAGE)
         end
 
-        if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:drop)
+        if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:drops)
           puts "CALLING THE DROP"
-          drops << object.drop
+          object.drops.each do |drop|
+            drops << drop
+          end
         end
 
       end

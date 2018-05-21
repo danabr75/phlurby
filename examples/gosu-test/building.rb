@@ -44,9 +44,8 @@ class Building
     @health -= damage
   end
 
-  def drop
-    puts "DROP HERE"
-    MissilePack.new(@x, @y)
+  def drops
+    [MissilePack.new(@x, @y)]
   end
 
   def draw

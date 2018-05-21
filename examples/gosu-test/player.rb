@@ -93,27 +93,27 @@ class Player
     self.secondary_cooldown_wait -= 1 if self.secondary_cooldown_wait > 0
   end
 
-  def collect_stars(stars)
-    stars.reject! do |star|
-      if Gosu.distance(@x, @y, star.x, star.y) < 35
-        @score += 10
-        @attack_speed = @attack_speed + 0.1
-        @attack_speed = MAX_ATTACK_SPEED if @attack_speed > MAX_ATTACK_SPEED
+  # def collect_stars(stars)
+  #   stars.reject! do |star|
+  #     if Gosu.distance(@x, @y, star.x, star.y) < 35
+  #       @score += 10
+  #       @attack_speed = @attack_speed + 0.1
+  #       @attack_speed = MAX_ATTACK_SPEED if @attack_speed > MAX_ATTACK_SPEED
 
-        # stop that!
-        # @beep.play
-        true
-      else
-        false
-      end
-    end
-  end
+  #       # stop that!
+  #       # @beep.play
+  #       true
+  #     else
+  #       false
+  #     end
+  #   end
+  # end
 
 
   def collect_pickups(pickups)
     pickups.reject! do |pickup|
-      if Gosu.distance(@x, @y, pickup.x, pickup.y) < 35
-        pickup.collected_by_player(self) if pickup.respond_to?(:collected_by_player)
+      if Gosu.distance(@x, @y, pickup.x, pickup.y) < 35 && pickup.respond_to?(:collected_by_player)
+        pickup.collected_by_player(self)
 
         # stop that!
         # @beep.play

@@ -38,7 +38,7 @@ require_relative 'building.rb'
 WIDTH, HEIGHT = 640, 480
 
 module ZOrder
-  Background, Building, Cursor, Pickups, Bullets, Player, UI = *0..6
+  Background, Building, Cursor, Bullets, SmallExplosions, BigExplosions, Pickups, Enemy, Player, UI = *0..10
 end
 
 # The only really new class here.
@@ -159,7 +159,7 @@ class OpenGLIntegration < Gosu::Window
     # @projectile_anim = Gosu::Image.new("media/projectile-mini.png")
     # puts "star_anim size: #{@star_anim.size}"
     # puts "projectile_anim size: #{@projectile_anim.size}"
-    @stars = Array.new
+    # @stars = Array.new
     @buildings = Array.new
     @projectiles = Array.new
     @enemy_projectiles = Array.new
@@ -239,7 +239,7 @@ class OpenGLIntegration < Gosu::Window
         end
       end
       
-      @player.collect_stars(@stars)
+      # @player.collect_stars(@stars)
       @player.collect_pickups(@pickups)
 
       @enemy_projectiles.each do |projectile|
@@ -258,7 +258,7 @@ class OpenGLIntegration < Gosu::Window
       @pickups = @pickups + projectile.hit_objects(@buildings)
     end
     
-    @stars.reject! { |star| !star.update }
+    # @stars.reject! { |star| !star.update }
     @buildings.reject! { |building| !building.update }
 
     # @buildings.reject! do |building|
@@ -279,7 +279,7 @@ class OpenGLIntegration < Gosu::Window
 
     @gl_background.scroll
     
-    @stars.push(Star.new()) if rand(75) == 0
+    # @stars.push(Star.new()) if rand(75) == 0
 
     # @buildings.push(Building.new()) if rand(500) == 0
     @buildings.push(Building.new()) if rand(100) == 0
@@ -314,7 +314,7 @@ class OpenGLIntegration < Gosu::Window
     @enemies.each { |enemy| enemy.draw }
     @projectiles.each { |projectile| projectile.draw() }
     @enemy_projectiles.each { |projectile| projectile.draw() }
-    @stars.each { |star| star.draw }
+    # @stars.each { |star| star.draw }
     @pickups.each { |pickup| pickup.draw }
     @buildings.each { |building| building.draw }
     @font.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
