@@ -1,20 +1,27 @@
 class Missile
-  attr_reader :x, :y
+  attr_reader :x, :y, :time_alive
   COOLDOWN_DELAY = 30
+  MAX_SPEED      = 25
+  STARTING_SPEED = 1.2
+  DAMAGE = 50
   
-  def initialize(animation, player, side)
-    @animation = animation
+  def initialize(object, side)
+    @animation = Gosu::Image.new("media/missile.png")
     # @color = Gosu::Color.new(0xff_000000)
     # @color.red = rand(255 - 40) + 40
     # @color.green = rand(255 - 40) + 40
     # @color.blue = rand(255 - 40) + 40
     if side == 'left'
-      @x = player.get_x - (player.get_width / 2)
-      @y = player.get_y# - player.get_height
+      @x = object.get_x - (object.get_width / 2)
+      @y = object.get_y# - player.get_height
+    elsif side == 'right'
+      @x = (object.get_x + object.get_width / 2) - 4
+      @y = object.get_y# - player.get_height
     else
-      @x = (player.get_x + player.get_width / 2) - 4
-      @y = player.get_y# - player.get_height
+      @x = object.get_x
+      @y = object.get_y
     end
+    @time_alive = 0
   end
 
   def draw
@@ -29,41 +36,38 @@ class Missile
   end
   
   def update
-    @y -= 6
+    new_speed = STARTING_SPEED * @time_alive
+    new_speed = MAX_SPEED if new_speed > MAX_SPEED
+    @y -= new_speed
 
     # Return false when out of screen (gets deleted then)
+    @time_alive += 1
+
     @y > 0
   end
 
-  
-  def hit_stars(stars)
-    stars.reject! do |star|
-      if Gosu.distance(@x, @y, star.x, star.y) < 35
-        # puts "HIT STAR!!"
+
+  def hit_objects(objects)
+    objects.reject! do |object|
+      if Gosu.distance(@x, @y, object.x, object.y) < 30
         @y = 0
-        # @score += 10
-        # stop that!
-        # @beep.play
         true
       else
         false
       end
     end
   end
-  
-  def hit_enemies(enemies)
-    enemies.reject! do |enemy|
-      if Gosu.distance(@x, @y, enemy.x, enemy.y) < 30
-        # puts "HIT STAR!!"
-        # @y = 0
-        # @score += 10
-        # stop that!
-        # @beep.play
-        true
-      else
-        false
-      end
+
+
+  def hit_object(object)
+    return_value = nil
+    if Gosu.distance(@x, @y, object.x, object.y) < 30
+      @y = 0
+      return_value = DAMAGE
+    else
+      return_value = 0
     end
+    return return_value
   end
 
 

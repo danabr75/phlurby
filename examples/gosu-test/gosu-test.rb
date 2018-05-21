@@ -28,6 +28,7 @@ require 'gl'
 require 'rmagick'
 require_relative 'star.rb'
 require_relative 'bullet.rb'
+require_relative 'enemy_bullet.rb'
 require_relative 'missile.rb'
 require_relative 'player.rb'
 require_relative 'enemy_player.rb'
@@ -149,14 +150,14 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @player = Player.new(400, 500)
     
     # @star_anim = Gosu::Image::load_tiles("media/star.png", 25, 25)
-    # @bullet_anim = Gosu::Image::load_tiles("media/bullet.png", 25, 25)
-    # @bullet_anim = Gosu::Image::load_tiles("media/bullet.png", 25, 25)
-    # @bullet_anim = Gosu::Image.new("media/bullet-mini.png")
+    # @projectile_anim = Gosu::Image::load_tiles("media/projectile.png", 25, 25)
+    # @projectile_anim = Gosu::Image::load_tiles("media/projectile.png", 25, 25)
+    # @projectile_anim = Gosu::Image.new("media/projectile-mini.png")
     # puts "star_anim size: #{@star_anim.size}"
-    # puts "bullet_anim size: #{@bullet_anim.size}"
+    # puts "projectile_anim size: #{@projectile_anim.size}"
     @stars = Array.new
-    @bullets = Array.new
-    @enemy_bullets = Array.new
+    @projectiles = Array.new
+    @enemy_projectiles = Array.new
 
     @enemies = Array.new
     
@@ -170,54 +171,62 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
   end
   
   def update
-    @player.cooldown_wait -= 1 if @player.cooldown_wait > 0
-    @player.move_left  if Gosu.button_down?(Gosu::KB_LEFT)  || Gosu.button_down?(Gosu::GP_LEFT)    || Gosu.button_down?(Gosu::KB_A)
-    @player.move_right if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::GP_RIGHT)   || Gosu.button_down?(Gosu::KB_D)
-    @player.accelerate if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
-    @player.brake      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
+    if Gosu.button_down?(Gosu::KB_Q)
+      close!
+    end
 
-    if Gosu.button_down?(Gosu::MS_LEFT)
-      # puts "MOUSE CLICK"
-      if @player.cooldown_wait <= 0
-        bullets = @player.attack()
-        @player.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(@player.attack_speed)
+    if @player.is_alive
+      @player.cooldown_wait -= 1 if @player.cooldown_wait > 0
+      @player.move_left  if Gosu.button_down?(Gosu::KB_LEFT)  || Gosu.button_down?(Gosu::GP_LEFT)    || Gosu.button_down?(Gosu::KB_A)
+      @player.move_right if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::GP_RIGHT)   || Gosu.button_down?(Gosu::KB_D)
+      @player.accelerate if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
+      @player.brake      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
 
-        bullets.each do |bullet|
-          @bullets.push(bullet)
+      if Gosu.button_down?(Gosu::MS_LEFT)
+        # puts "MOUSE CLICK"
+        if @player.cooldown_wait <= 0
+          projectiles = @player.attack[:projectiles]
+          cooldown = @player.attack[:cooldown]
+          @player.cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
+
+          projectiles.each do |projectile|
+            @projectiles.push(projectile)
+          end
+        end
+      end
+
+      if Gosu.button_down?(Gosu::KB_SPACE)
+        if @player.cooldown_wait <= 0
+          projectiles, cooldown = @player.secondary_attack
+          @player.cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
+
+          projectiles.each do |projectile|
+            @projectiles.push(projectile)
+          end
+        end
+      end
+      
+      @player.collect_stars(@stars)
+
+      @enemy_projectiles.each do |projectile|
+        # projectile.hit_stars(@stars)
+        hit_player = projectile.hit_object(@player)
+        if hit_player > 0
+          # puts "hit_player: #{hit_player}"
+          @player.health -= hit_player
         end
       end
     end
 
-    if Gosu.button_down?(Gosu::KB_SPACE)
-      if @player.cooldown_wait <= 0
-        bullets = @player.attack()
-        @player.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(@player.attack_speed)
-
-        bullets.each do |bullet|
-          @bullets.push(bullet)
-        end
-      end
-    end
-    
-    @player.collect_stars(@stars)
-
-    @bullets.each do |bullet|
-      bullet.hit_objects(@stars)
-      bullet.hit_objects(@enemies)
+    @projectiles.each do |projectile|
+      projectile.hit_objects(@stars)
+      projectile.hit_objects(@enemies)
     end
     
     @stars.reject! { |star| !star.update }
-    @bullets.reject! { |bullet| !bullet.update }
+    @projectiles.reject! { |projectile| !projectile.update }
 
-    @enemy_bullets.each do |bullet|
-      # bullet.hit_stars(@stars)
-      hit_player = bullet.hit_object(@player)
-      if hit_player > 0
-        puts "hit_player: #{hit_player}"
-        @player.health -= hit_player
-      end
-    end
-    @enemy_bullets.reject! { |bullet| !bullet.update }
+    @enemy_projectiles.reject! { |projectile| !projectile.update }
 
 
     @gl_background.scroll
@@ -229,11 +238,12 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
     @enemies.each do |enemy|
       enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
       if enemy.cooldown_wait <= 0
-        bullets = enemy.attack()
-        enemy.cooldown_wait = Bullet::COOLDOWN_DELAY.to_f.fdiv(enemy.attack_speed)
+        projectiles = enemy.attack[:projectiles]
+        cooldown = enemy.attack[:cooldown]
+        enemy.cooldown_wait = cooldown.to_f.fdiv(enemy.attack_speed)
 
-        bullets.each do |bullet|
-          @enemy_bullets.push(bullet)
+        projectiles.each do |projectile|
+          @enemy_projectiles.push(projectile)
         end
       end
     end
@@ -242,10 +252,10 @@ class OpenGLIntegration < (Example rescue Gosu::Window)
 
   def draw
     @player.draw if @player.is_alive
-    @font.draw("You are dead!", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("You are dead! Press Q to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @enemies.each { |enemy| enemy.draw }
-    @bullets.each { |bullet| bullet.draw }
-    @enemy_bullets.each { |bullet| bullet.draw }
+    @projectiles.each { |projectile| projectile.draw }
+    @enemy_projectiles.each { |projectile| projectile.draw }
     @stars.each { |star| star.draw }
     @font.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)

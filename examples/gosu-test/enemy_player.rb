@@ -19,11 +19,13 @@ class EnemyPlayer < Player
   end
 
   def attack
-    return [
-      EnemyBullet.new(self)
-    ]
+    return {
+      projectiles: [EnemyBullet.new(self)],
+      cooldown: EnemyBullet::COOLDOWN_DELAY
+    }
   end
-  
+
+
   def draw
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
   end

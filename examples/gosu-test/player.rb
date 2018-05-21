@@ -68,15 +68,14 @@ class Player
     @y = [@y + Speed, HEIGHT].min
   end
 
-  def attack
-    return [
-      Bullet.new(self, 'left'),
-      Bullet.new(self, 'right')
-    ]
-  end
-  
 
-  def secondary_attack player
+  def attack
+    return {
+      projectiles: [Bullet.new(self, 'left'), Bullet.new(self, 'right')],
+      cooldown: Bullet::COOLDOWN_DELAY
+    }
+  end
+  def secondary_attack
     return [
       Bullet.new(self, 'left'),
       Bullet.new(self, 'right')
