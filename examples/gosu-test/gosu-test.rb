@@ -33,11 +33,12 @@ require_relative 'missile.rb'
 require_relative 'player.rb'
 require_relative 'enemy_player.rb'
 require_relative 'cursor.rb'
+require_relative 'building.rb'
 
 WIDTH, HEIGHT = 640, 480
 
 module ZOrder
-  Background, Cursor, Stars, Bullets, Player, UI = *0..5
+  Background, Building, Cursor, Pickups, Bullets, Player, UI = *0..6
 end
 
 # The only really new class here.
@@ -48,6 +49,8 @@ class GLBackground
   POINTS_Y = 7
   # Scrolling speed
   SCROLLS_PER_STEP = 50
+  # TEMP USING THIS, CANNOT FIND SCROLLING SPEED
+  SCROLLING_SPEED = 4
 
   def initialize
     @image = Gosu::Image.new("media/earth.png", :tileable => true)
@@ -157,13 +160,15 @@ class OpenGLIntegration < Gosu::Window
     # puts "star_anim size: #{@star_anim.size}"
     # puts "projectile_anim size: #{@projectile_anim.size}"
     @stars = Array.new
+    @buildings = Array.new
     @projectiles = Array.new
     @enemy_projectiles = Array.new
+    @pickups = Array.new
 
     @enemies = Array.new
     
     @font = Gosu::Font.new(20)
-    @max_enemies = 12
+    @max_enemies = 4
 
     # @cursor = Gosu::Image.new(self, 'media/crosshair.png')
     # @pointer = Gosu::Image.new(self,"media/crosshair.png")
@@ -246,22 +251,40 @@ class OpenGLIntegration < Gosu::Window
     end
 
     @projectiles.each do |projectile|
-      projectile.hit_objects(@stars)
-      projectile.hit_objects(@enemies)
+      # @pickups = @pickups + projectile.hit_objects(@stars)
+      @pickups = @pickups + projectile.hit_objects(@enemies)
+      @pickups = @pickups + projectile.hit_objects(@buildings)
     end
     
     @stars.reject! { |star| !star.update }
+    @buildings.reject! { |building| !building.update }
+
+    # @buildings.reject! do |building|
+    #   results = building.update
+    #   (results[:drops] || []).each do |drop|
+    #     @pickups << drop
+    #   end
+    #   !results[:update]
+    # end
+
+    @pickups.reject! { |pickup| !pickup.update }
+
     @projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
 
     @enemy_projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
+    @enemies.reject! { |enemy| !enemy.update }
 
 
     @gl_background.scroll
     
     @stars.push(Star.new()) if rand(75) == 0
 
+    # @buildings.push(Building.new()) if rand(500) == 0
+    @buildings.push(Building.new()) if rand(100) == 0
+
     @enemies.push(EnemyPlayer.new(rand(WIDTH), 25 )) if rand(100) == 0 && @enemies.count <= @max_enemies
 
+    # Move to enemy mehtods
     @enemies.each do |enemy|
       enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
       if enemy.cooldown_wait <= 0
@@ -275,8 +298,11 @@ class OpenGLIntegration < Gosu::Window
         end
       end
     end
-
   end
+
+  # def scroll
+  #   @buildings.reject! { |building| !building.update }
+  # end
 
   def draw
     @pointer.draw(self.mouse_x, self.mouse_y)
@@ -287,6 +313,8 @@ class OpenGLIntegration < Gosu::Window
     @projectiles.each { |projectile| projectile.draw() }
     @enemy_projectiles.each { |projectile| projectile.draw() }
     @stars.each { |star| star.draw }
+    @pickups.each { |pickup| pickup.draw }
+    @buildings.each { |building| building.draw }
     @font.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)

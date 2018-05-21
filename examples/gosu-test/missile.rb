@@ -74,14 +74,23 @@ class Missile
 
 
   def hit_objects(objects)
-    objects.reject! do |object|
+    drops = []
+    objects.each do |object|
       if Gosu.distance(@x, @y, object.x, object.y) < 30
-        @y = -50
-        true
-      else
-        false
+        # Missile destroyed
+        @y = -100
+        if object.respond_to?(:health) && object.respond_to?(:take_damage)
+          object.take_damage(DAMAGE)
+        end
+
+        if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:drop)
+          puts "CALLING THE DROP"
+          drops << object.drop
+        end
+
       end
     end
+    return drops
   end
 
 

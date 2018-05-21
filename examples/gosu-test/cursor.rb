@@ -8,26 +8,6 @@ class Cursor
     image = Magick::Image::read("media/crosshair.png").first#.resize(0.3)
     @image = Gosu::Image.new(image, :tileable => true)
   end
-  # def toggleVisible
-  #   if not @forced
-  #     @visible=!visible
-  #   end
-  # end
-  # def forceVisible
-  #   @forced=true
-  #   @visible=true
-  # end
-  # def unforceVisible
-  #   @forced=false
-  # end
-  # def visible?
-  #   return visible
-  # end
-  # def draw
-  #   if @visible
-  #     @imgObj.draw(window.mouse_x,window.mouse_y,ZOrder::Cursor)
-  #   end
-  # end
 
 
   def draw mouse_x, mouse_y
