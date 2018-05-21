@@ -3,7 +3,7 @@ class GrapplingHook
   attr_accessor :active
 
   COOLDOWN_DELAY = 30
-  MAX_SPEED      = 25
+  # MAX_SPEED      = 2
   # STARTING_SPEED = 0.0
   # INITIAL_DELAY  = 2
   # SPEED_INCREASE_FACTOR = 0.5
@@ -26,7 +26,7 @@ class GrapplingHook
     # @y = mouse_y
     # @time_alive = 0
     @active = true
-    @acquired_item = false
+    @acquired_items = 0
   end
 
   def draw(player)
@@ -82,7 +82,7 @@ class GrapplingHook
   end
 
   def active
-    @active && !@acquired_item
+    @active && @acquired_items == 0
   end
 
   def deactivate
@@ -119,30 +119,30 @@ class GrapplingHook
     # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
     if @x > mouse_x
       difference = @x - mouse_x
-      if difference > MAX_CURSOR_FOLLOW
-        difference = MAX_CURSOR_FOLLOW
+      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @x = @x - difference
     else
       # Cursor is right of the missle, missile needs to go right. @x needs to get bigger. @x is smaller than mouse_x
       difference = mouse_x - @x
-      if difference > MAX_CURSOR_FOLLOW
-        difference = MAX_CURSOR_FOLLOW
+      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @x = @x + difference
     end
 
     if @y > mouse_y
       difference = @y - mouse_y
-      if difference > MAX_CURSOR_FOLLOW
-        difference = MAX_CURSOR_FOLLOW
+      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @y = @y - difference
     else
       # Cursor is right of the missle, missile needs to go right. @y needs to get bigger. @y is smaller than mouse_y
       difference = mouse_y - @y
-      if difference > MAX_CURSOR_FOLLOW
-        difference = MAX_CURSOR_FOLLOW
+      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @y = @y + difference
     end
@@ -158,7 +158,7 @@ class GrapplingHook
     pickups.reject! do |pickup|
       if Gosu.distance(@x, @y, pickup.x, pickup.y) < 35 && pickup.respond_to?(:collected_by_player)
         pickup.collected_by_player(player)
-        @acquired_item = true
+        @acquired_items += 1
         true
       else
         false
