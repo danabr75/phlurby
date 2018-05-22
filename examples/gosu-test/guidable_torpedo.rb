@@ -1,4 +1,4 @@
-class GrapplingHook
+class GuidableTorpedo
   attr_reader :x, :y, :time_alive
   COOLDOWN_DELAY = 30
   MAX_SPEED      = 25

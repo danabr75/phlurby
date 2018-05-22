@@ -36,6 +36,9 @@ require_relative 'cursor.rb'
 require_relative 'building.rb'
 require_relative 'grappling_hook.rb'
 
+exit if Object.const_defined?(:Ocra) #allow ocra to create an exe without executing the entire script
+
+
 WIDTH, HEIGHT = 640, 480
 
 module ZOrder
@@ -214,12 +217,8 @@ class OpenGLIntegration < Gosu::Window
       @player.brake      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
 
       if Gosu.button_down?(Gosu::MS_RIGHT)
-        puts "MOUSE CLICK - MS_RIGHT"
         if @grappling_hook == nil
-          puts "CREAITNG NEW GRAPPLE"
           @grappling_hook = GrapplingHook.new(@player)
-        # else
-          # @grappling_hook.activate
         end
       end
 
@@ -229,9 +228,7 @@ class OpenGLIntegration < Gosu::Window
         if (id == Gosu::MS_RIGHT)
           # puts "MOUSE CLICK"
           # @grappling_hook = nil
-          puts "DEACTIVATE GRAPPLE"
-          @grappling_hook.deactivate
-          puts "AFTER WARDS: #{@grappling_hook.active}"
+          @grappling_hook.deactivate if @grappling_hook
         end
       end
       # if button_up?(Gosu::MS_RIGHT)
