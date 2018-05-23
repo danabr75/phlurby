@@ -24,7 +24,8 @@
 
 # require 'rubygems'
 require 'gosu'
-require 'gl'
+# require 'opengl'
+require_relative 'lib/opengl.rb'
 # require 'rmagick'
 require_relative 'star.rb'
 require_relative 'bullet.rb'
