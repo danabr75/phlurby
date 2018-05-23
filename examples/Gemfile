@@ -1,13 +1,17 @@
 source 'https://rubygems.org'
-ruby '2.2.4'
+ruby '2.4.4'
 
-gem 'ruby2d'
+# gem 'ruby2d'
+# Windows: sudo apt-get install libsdl2-dev
+  # sudo apt-get install ruby-dev
+  # sudo apt install pulseaudio
 gem 'gosu'
 # gem 'gosu-examples'
 gem 'opengl'
 # gem 'texplay'
-gem 'rmagick'
+# gem 'rmagick'
 gem 'ocra'
+# gem 'rb2exe'
 
 # Project of the Day screenshot
 # Discover more awesome projects in the Gosu Showcase.

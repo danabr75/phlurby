@@ -22,10 +22,10 @@
 # the block given to Window#gl, and that Gosu Images can be
 # used as textures using the gl_tex_info call.
 
-require 'rubygems'
+# require 'rubygems'
 require 'gosu'
 require 'gl'
-require 'rmagick'
+# require 'rmagick'
 require_relative 'star.rb'
 require_relative 'bullet.rb'
 require_relative 'enemy_bullet.rb'
@@ -36,7 +36,7 @@ require_relative 'cursor.rb'
 require_relative 'building.rb'
 require_relative 'grappling_hook.rb'
 
-exit if Object.const_defined?(:Ocra) #allow ocra to create an exe without executing the entire script
+# exit if Object.const_defined?(:Ocra) #allow ocra to create an exe without executing the entire script
 
 
 WIDTH, HEIGHT = 640, 480

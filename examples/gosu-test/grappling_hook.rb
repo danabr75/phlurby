@@ -13,11 +13,13 @@ class GrapplingHook
 
   def initialize(object)
 
-    image = Magick::Image::read("media/grappling_hook.png").first.resize(0.1)
-    @image = Gosu::Image.new(image, :tileable => true)
+    # image = Magick::Image::read("media/grappling_hook.png").first.resize(0.1)
+    # @image = Gosu::Image.new(image, :tileable => true)
+    @image = Gosu::Image.new("media/grappling_hook.png")
 
-    chain = Magick::Image::read("media/chain.png").first.resize(0.1)
-    @chain = Gosu::Image.new(chain, :tileable => true)
+    # chain = Magick::Image::read("media/chain.png").first.resize(0.1)
+    # @chain = Gosu::Image.new(chain, :tileable => true)
+    @chain = Gosu::Image.new("media/chain.png")
 
     @x = object.get_x - (object.get_width / 2)
     @y = object.get_y

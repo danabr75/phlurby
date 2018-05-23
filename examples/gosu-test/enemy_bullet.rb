@@ -4,10 +4,6 @@ class EnemyBullet < Bullet
   
   def initialize(player)
     @animation = Gosu::Image.new("media/bullet-mini.png")
-    # @color = Gosu::Color.new(0xff_000000)
-    # @color.red = rand(255 - 40) + 40
-    # @color.green = rand(255 - 40) + 40
-    # @color.blue = rand(255 - 40) + 40
     @x = player.get_x
     @y = player.get_y# - player.get_height
   end

@@ -1,12 +1,9 @@
 class Cursor
   # attr_reader :img, :visible, :imgObj
   def initialize
-    # @img=img
-    # @visible=visible
-    # @imgObj=Gosu::Image.new(window,img,true)
-    # @forced=false
-    image = Magick::Image::read("media/crosshair.png").first#.resize(0.3)
-    @image = Gosu::Image.new(image, :tileable => true)
+    # image = Magick::Image::read("media/crosshair.png").first#.resize(0.3)
+    # @image = Gosu::Image.new(image, :tileable => true)
+    @image = Gosu::Image.new("media/crosshair.png")
   end
 
 

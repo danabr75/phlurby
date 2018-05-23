@@ -8,11 +8,13 @@ class SmallExplosion
     # ship = Magick::Image::read("media/starfighter.bmp").first#.resize(0.3)
     # @ship = Gosu::Image.new(ship, :tileable => true)
 
-    smoke = Magick::Image::read("media/smoke.png").first
-    @smoke = Gosu::Image.new(smoke, :tileable => true)
+    # smoke = Magick::Image::read("media/smoke.png").first
+    # @smoke = Gosu::Image.new(smoke, :tileable => true)
+    @smoke = Gosu::Image.new("media/smoke.png", :tileable => true)
 
-    image = Magick::Image::read("media/starfighterv4.png").first
-    @image = Gosu::Image.new(image, :tileable => true)
+    # image = Magick::Image::read("media/starfighterv4.png").first
+    # @image = Gosu::Image.new(image, :tileable => true)
+    @image = Gosu::Image.new("media/starfighterv4.png", :tileable => true)
 
     @x = x
     @y = y
@@ -36,11 +38,11 @@ class SmallExplosion
       # 49 / 50
       fraction = (@time_to_live - @living_time).to_f.fdiv(@time_to_live)
       if fraction < 1.0 && fraction > 0.05
-        smoke = Magick::Image::read("media/smoke.png").first.resize(fraction)
-        @smoke = Gosu::Image.new(smoke, :tileable => true)
+        # smoke = Magick::Image::read("media/smoke.png").first.resize(fraction)
+        # @smoke = Gosu::Image.new(smoke, :tileable => true)
 
-        image = Magick::Image::read("media/starfighterv4.png").first.resize(fraction)
-        @image = Gosu::Image.new(image, :tileable => true)
+        # image = Magick::Image::read("media/starfighterv4.png").first.resize(fraction)
+        # @image = Gosu::Image.new(image, :tileable => true)
       elsif fraction > 0.05
         @living_time = @time_to_live
       end
