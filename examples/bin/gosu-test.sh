@@ -1,1 +1,1 @@
-ruby gosu-test/gosu-test.rb
+ruby 'gosu-test/gosu-test.rb'
