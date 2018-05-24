@@ -1,6 +1,7 @@
 require_relative 'bullet.rb'
 require_relative 'missile.rb'
 require_relative 'missile_pack.rb'
+require_relative 'health_pack.rb'
 
 class Building
   POINT_VALUE_BASE = 1
@@ -38,7 +39,11 @@ class Building
   end
 
   def drops
-    [MissilePack.new(@x, @y)]
+    if rand(5) == 4
+      [HealthPack.new(@x, @y)]
+    else
+      [MissilePack.new(@x, @y)]
+    end
   end
 
   def draw

@@ -161,9 +161,16 @@ class OpenGLIntegration < Gosu::Window
   #   super(id)
   # end
 
+  def self.reset(window)
+    window = OpenGLIntegration.new.show
+  end
+
   def initialize
     super WIDTH, HEIGHT
     
+    @game_pause = false
+    @can_pause = true
+
     self.caption = "OpenGL Integration"
     
     @gl_background = GLBackground.new
@@ -224,7 +231,38 @@ class OpenGLIntegration < Gosu::Window
       close!
     end
 
-    if @player.is_alive
+    # Gosu::Window#button_up
+    def button_up id
+      # super
+      if (id == Gosu::MS_RIGHT) && @player.is_alive
+        # puts "MOUSE CLICK"
+        # @grappling_hook = nil
+        @grappling_hook.deactivate if @grappling_hook
+      end
+
+      if (id == Gosu::KB_P)
+        puts "Freeing up pause"
+        @can_pause = true
+      end
+    end
+
+
+    if Gosu.button_down?(Gosu::KB_M)
+      OpenGLIntegration.reset(self)
+    end
+
+    if Gosu.button_down?(Gosu::KB_P)
+      puts "FAKE GAME PAUSE: #{@game_pause} and #{@can_pause}"
+    end
+
+    if Gosu.button_down?(Gosu::KB_P) && @can_pause
+      @can_pause = false
+      puts "GAME PAUSE: #{@game_pause}"
+      @game_pause = !@game_pause
+    end
+
+
+    if @player.is_alive && !@game_pause
       @player.update
       @player.move_left  if Gosu.button_down?(Gosu::KB_LEFT)  || Gosu.button_down?(Gosu::GP_LEFT)    || Gosu.button_down?(Gosu::KB_A)
       @player.move_right if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::GP_RIGHT)   || Gosu.button_down?(Gosu::KB_D)
@@ -236,20 +274,6 @@ class OpenGLIntegration < Gosu::Window
           @grappling_hook = GrapplingHook.new(@player)
         end
       end
-
-      # Gosu::Window#button_up
-      def button_up id
-        # super
-        if (id == Gosu::MS_RIGHT)
-          # puts "MOUSE CLICK"
-          # @grappling_hook = nil
-          @grappling_hook.deactivate if @grappling_hook
-        end
-      end
-      # if button_up?(Gosu::MS_RIGHT)
-      #   # puts "MOUSE CLICK"
-      #   @grappling_hook = nil
-      # end
 
 
       if Gosu.button_down?(Gosu::MS_LEFT)
@@ -279,7 +303,8 @@ class OpenGLIntegration < Gosu::Window
           end
         end
       end
-      
+
+
       # @player.collect_stars(@stars)
       @player.collect_pickups(@pickups)
 
@@ -296,79 +321,86 @@ class OpenGLIntegration < Gosu::Window
       @grappling_hook.collect_pickups(@player, @pickups) if @grappling_hook && @grappling_hook.active
     end
 
-    @projectiles.each do |projectile|
-      # @pickups = @pickups + projectile.hit_objects(@stars)
-      enemy_results = projectile.hit_objects(@enemies)
-      @pickups = @pickups + enemy_results[:drops]
-      @player.score += enemy_results[:point_value]
-      building_results = projectile.hit_objects(@buildings)
-      @pickups = @pickups + building_results[:drops]
-      @player.score += building_results[:point_value]
-    end
+    if !@game_pause
 
-
-    
-    
-    # @stars.reject! { |star| !star.update }
-    @buildings.reject! { |building| !building.update }
-
-    if @player.is_alive && @grappling_hook
-      grap_result = @grappling_hook.update(self.mouse_x, self.mouse_y, @player)
-      puts "Setting grap to nil - #{grap_result}" if !grap_result
-      @grappling_hook = nil if !grap_result
-    end
-
-    # @buildings.reject! do |building|
-    #   results = building.update
-    #   (results[:drops] || []).each do |drop|
-    #     @pickups << drop
-    #   end
-    #   !results[:update]
-    # end
-
-    @pickups.reject! { |pickup| !pickup.update }
-
-    @projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
-
-    @enemy_projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
-    @enemies.reject! { |enemy| !enemy.update }
-
-
-    @gl_background.scroll
-    
-    # @stars.push(Star.new()) if rand(75) == 0
-
-    # @buildings.push(Building.new()) if rand(500) == 0
-    @buildings.push(Building.new()) if rand(100) == 0
-
-
-    if @player.is_alive && rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
-      (0..@enemies_spawner_counter).each do |count|
-        @enemies.push(EnemyPlayer.new())
+      @projectiles.each do |projectile|
+        # @pickups = @pickups + projectile.hit_objects(@stars)
+        enemy_results = projectile.hit_objects(@enemies)
+        @pickups = @pickups + enemy_results[:drops]
+        @player.score += enemy_results[:point_value]
+        building_results = projectile.hit_objects(@buildings)
+        @pickups = @pickups + building_results[:drops]
+        @player.score += building_results[:point_value]
       end
-    end
-    if @player.time_alive % 500 == 0
-      @max_enemies += 1
-    end
-    if @player.time_alive % 1000 == 0 && @enemies_random_spawn_timer > 5
-      @enemies_random_spawn_timer -= 5
-    end
-    if @player.time_alive % 5000 == 0
-      @enemies_spawner_counter += 1
-    end
 
 
-    # Move to enemy mehtods
-    @enemies.each do |enemy|
-      enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
-      if enemy.cooldown_wait <= 0
-        results = enemy.attack
-        projectiles = results[:projectiles]
-        cooldown = results[:cooldown]
-        enemy.cooldown_wait = cooldown.to_f.fdiv(enemy.attack_speed)
+      
+      
+      # @stars.reject! { |star| !star.update }
+      @buildings.reject! { |building| !building.update }
 
-        projectiles.each do |projectile|
-          @enemy_projectiles.push(projectile)
+      if @player.is_alive && @grappling_hook
+        grap_result = @grappling_hook.update(self.mouse_x, self.mouse_y, @player)
+        puts "Setting grap to nil - #{grap_result}" if !grap_result
+        @grappling_hook = nil if !grap_result
+      end
+
+      # @buildings.reject! do |building|
+      #   results = building.update
+      #   (results[:drops] || []).each do |drop|
+      #     @pickups << drop
+      #   end
+      #   !results[:update]
+      # end
+
+      @pickups.reject! { |pickup| !pickup.update }
+
+      @projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
+
+      @enemy_projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
+      @enemies.reject! { |enemy| !enemy.update(@player) }
+
+
+      @gl_background.scroll
+      
+      # @stars.push(Star.new()) if rand(75) == 0
+
+      # @buildings.push(Building.new()) if rand(500) == 0
+      @buildings.push(Building.new()) if rand(100) == 0
+
+
+      if @player.is_alive && rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
+        (0..@enemies_spawner_counter).each do |count|
+          @enemies.push(EnemyPlayer.new())
+        end
+      end
+      if @player.time_alive % 500 == 0
+        @max_enemies += 1
+      end
+      if @player.time_alive % 1000 == 0 && @enemies_random_spawn_timer > 5
+        @enemies_random_spawn_timer -= 5
+      end
+      if @player.time_alive % 5000 == 0
+        @enemies_spawner_counter += 1
+      end
+
+      if @player.time_alive % 1000 == 0 && @player.time_alive > 0
+        @player.score += 100
+      end
+
+
+      # Move to enemy mehtods
+      @enemies.each do |enemy|
+        enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
+        if enemy.cooldown_wait <= 0
+          results = enemy.attack
+          projectiles = results[:projectiles]
+          cooldown = results[:cooldown]
+          enemy.cooldown_wait = cooldown.to_f.fdiv(enemy.attack_speed)
+
+          projectiles.each do |projectile|
+            @enemy_projectiles.push(projectile)
+          end
         end
       end
     end
@@ -384,6 +416,7 @@ class OpenGLIntegration < Gosu::Window
     @player.draw if @player.is_alive
     @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
     @font.draw("You are dead! Press Q to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("Paused", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
     @enemies.each { |enemy| enemy.draw }
     @projectiles.each { |projectile| projectile.draw() }
     @enemy_projectiles.each { |projectile| projectile.draw() }
@@ -395,7 +428,8 @@ class OpenGLIntegration < Gosu::Window
     @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Armor: #{@player.armor}", 10, 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Time Alive: #{@player.time_alive} - #{@enemies_spawner_counter}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Time Alive: #{@player.time_alive}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Level: #{@enemies_spawner_counter + 1}", 10, 100, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)
   end
 end

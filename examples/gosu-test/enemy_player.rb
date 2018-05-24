@@ -56,28 +56,33 @@ class EnemyPlayer < Player
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Enemy)
   end
 
-  def update
+  def update player
     # @y += 3
     if is_alive
-      if rand(2).even?
-        @y += rand(5)
-
-        @y = HEIGHT / 2 if @y > HEIGHT / 2
+      # Stay above the player
+      if player.is_alive && player.y < @y
+          @y -= rand(5)
       else
-        @y -= rand(5)
+        if rand(2).even?
+          @y += rand(5)
 
-        @y = 0 + @image.height if @y < 0 + @image.height
+          @y = HEIGHT / 2 if @y > HEIGHT / 2
+        else
+          @y -= rand(5)
+
+          @y = 0 + (@image.height / 2) if @y < 0 + (@image.height / 2)
+        end
       end
       if rand(2).even?
         @x += rand(5)
         @x = WIDTH if @x > WIDTH
       else
         @x -= rand(5)
-        @x = 0 + @image.width if @x < 0 + @image.width
+        @x = 0 + (@image.width / 2) if @x < 0 + (@image.width / 2)
       end
 
 
-      @y < HEIGHT + @image.height
+      @y < HEIGHT + (@image.height / 2)
     else
       false
     end

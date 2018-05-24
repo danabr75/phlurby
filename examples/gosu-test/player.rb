@@ -5,6 +5,7 @@ class Player
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
   attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive
+  MAX_HEALTH = 200
 
   def initialize(x, y)
     # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/spaceship.png").first.resize(0.3)
@@ -42,15 +43,15 @@ class Player
   end
 
   def move_left
-    @x = [@x - Speed, 0].max
+    @x = [@x - Speed, (@image.width/3)].max
   end
   
   def move_right
-    @x = [@x + Speed, WIDTH].min
+    @x = [@x + Speed, (WIDTH - (@image.width/3))].min
   end
   
   def accelerate
-    @y = [@y - Speed, 50].max
+    @y = [@y - Speed, (@image.height/2)].max
   end
   
   def brake
