@@ -11,10 +11,10 @@ class EnemyPlayer < Player
   attr_accessor :cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
   def initialize(x = nil, y = nil)
-    # image = Magick::Image::read("media/starfighterv4.png").first
+    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/starfighterv4.png").first
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("media/starfighterv4.png")
-    # @beep = Gosu::Sample.new("media/beep.wav")
+    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/starfighterv4.png")
+    # @beep = Gosu::Sample.new("#{CURRENT_DIRECTORY}/media/beep.wav")
     @x = x || rand(WIDTH)
     @y = y || 0
     @score = 0

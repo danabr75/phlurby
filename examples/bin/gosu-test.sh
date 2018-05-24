@@ -1,0 +1,1 @@
+ruby gosu-test/gosu-test.rb

@@ -2,19 +2,19 @@ class SmallExplosion
   attr_reader :x, :y, :time_to_live, :living_time, :ship
 
   def initialize(x = nil, y = nil)
-    # image = Magick::Image::read("media/smoke.png").first#.resize(2)
+    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/smoke.png").first#.resize(2)
     # @image = Gosu::Image.new(image, :tileable => true)
 
-    # ship = Magick::Image::read("media/starfighter.bmp").first#.resize(0.3)
+    # ship = Magick::Image::read("#{CURRENT_DIRECTORY}/media/starfighter.bmp").first#.resize(0.3)
     # @ship = Gosu::Image.new(ship, :tileable => true)
 
-    # smoke = Magick::Image::read("media/smoke.png").first
+    # smoke = Magick::Image::read("#{CURRENT_DIRECTORY}/media/smoke.png").first
     # @smoke = Gosu::Image.new(smoke, :tileable => true)
-    @smoke = Gosu::Image.new("media/smoke.png", :tileable => true)
+    @smoke = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/smoke.png", :tileable => true)
 
-    # image = Magick::Image::read("media/starfighterv4.png").first
+    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/starfighterv4.png").first
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("media/starfighterv4.png", :tileable => true)
+    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/starfighterv4.png", :tileable => true)
 
     @x = x
     @y = y

@@ -7,10 +7,10 @@ class Player
   attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive
 
   def initialize(x, y)
-    # image = Magick::Image::read("media/spaceship.png").first.resize(0.3)
+    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/spaceship.png").first.resize(0.3)
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("media/spaceship.png")
-    # @beep = Gosu::Sample.new("media/beep.wav")
+    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/spaceship.png")
+    # @beep = Gosu::Sample.new("#{CURRENT_DIRECTORY}/media/beep.wav")
     @x, @y = x, y
     @score = 0
     @cooldown_wait = 0

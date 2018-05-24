@@ -24,6 +24,13 @@
 
 # require 'rubygems'
 require 'gosu'
+
+CURRENT_DIRECTORY = File.expand_path('../', __FILE__)
+
+
+puts "CURRENT_DIRECTORY: #{CURRENT_DIRECTORY}"
+puts "__FILE__: #{__FILE__}"
+
 # require 'opengl'
 require_relative 'lib/opengl.rb'
 # require 'rmagick'
@@ -37,6 +44,11 @@ require_relative 'cursor.rb'
 require_relative 'building.rb'
 require_relative 'grappling_hook.rb'
 
+
+
+# require_relative 'media'
+# Dir["/path/to/directory/*.rb"].each {|file| require file }
+# 
 # exit if Object.const_defined?(:Ocra) #allow ocra to create an exe without executing the entire script
 
 
@@ -58,7 +70,7 @@ class GLBackground
   SCROLLING_SPEED = 4
 
   def initialize
-    @image = Gosu::Image.new("media/earth.png", :tileable => true)
+    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/earth.png", :tileable => true)
     @scrolls = 0
     @height_map = Array.new(POINTS_Y) { Array.new(POINTS_X) { rand } }
   end
@@ -159,10 +171,10 @@ class OpenGLIntegration < Gosu::Window
     @player = Player.new(400, 500)
     @grappling_hook = nil
     
-    # @star_anim = Gosu::Image::load_tiles("media/star.png", 25, 25)
-    # @projectile_anim = Gosu::Image::load_tiles("media/projectile.png", 25, 25)
-    # @projectile_anim = Gosu::Image::load_tiles("media/projectile.png", 25, 25)
-    # @projectile_anim = Gosu::Image.new("media/projectile-mini.png")
+    # @star_anim = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/star.png", 25, 25)
+    # @projectile_anim = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/projectile.png", 25, 25)
+    # @projectile_anim = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/projectile.png", 25, 25)
+    # @projectile_anim = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/projectile-mini.png")
     # puts "star_anim size: #{@star_anim.size}"
     # puts "projectile_anim size: #{@projectile_anim.size}"
     # @stars = Array.new
@@ -179,13 +191,13 @@ class OpenGLIntegration < Gosu::Window
     @max_enemies = 4
 
     # @cursor = Gosu::Image.new(self, 'media/crosshair.png')
-    # @pointer = Gosu::Image.new(self,"media/crosshair.png")
+    # @pointer = Gosu::Image.new(self,"#{CURRENT_DIRECTORY}/media/crosshair.png")
 
-    # pointer = Magick::Image::read("media/crosshair.png").first.resize(0.3)
+    # pointer = Magick::Image::read("#{CURRENT_DIRECTORY}/media/crosshair.png").first.resize(0.3)
     # @pointer = Gosu::Image.new(pointer, :tileable => true)
 
     @pointer = Cursor.new
-    # @pointer = Gosu::Image.new("media/bullet-mini.png")
+    # @pointer = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/bullet-mini.png")
     # @px = 0
     # @py = 0
   end

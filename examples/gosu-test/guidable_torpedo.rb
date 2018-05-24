@@ -11,7 +11,7 @@
 
 #   def initialize(object)
 
-#     image = Magick::Image::read("media/missile.png").first.resize(0.3)
+#     image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/missile.png").first.resize(0.3)
 #     @image = Gosu::Image.new(image, :tileable => true)
 
 #     @x = object.get_x - (object.get_width / 2)

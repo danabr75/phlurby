@@ -4,7 +4,7 @@ class Bullet
   COOLDOWN_DELAY = 30
   
   def initialize(player, side = nil)
-    @animation = Gosu::Image.new("media/bullet-mini.png")
+    @animation = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/bullet-mini.png")
     # @color = Gosu::Color.new(0xff_000000)
     # @color.red = rand(255 - 40) + 40
     # @color.green = rand(255 - 40) + 40

@@ -2,10 +2,10 @@ class MissilePack
   attr_reader :x, :y
 
   def initialize(x = nil, y = nil)
-    # image = Magick::Image::read("media/missile_pack.png").first.resize(0.3)
+    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/missile_pack.png").first.resize(0.3)
 
-    # @image = Gosu::Image.new("media/grappling_hook.png")
-    @image = Gosu::Image.new("media/missile_pack.png", :tileable => true)
+    # @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/grappling_hook.png")
+    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/missile_pack.png", :tileable => true)
     @x = x
     @y = y
 

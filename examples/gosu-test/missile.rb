@@ -11,11 +11,11 @@ class Missile
 
   def initialize(object, mouse_x = nil, mouse_y = nil, side = nil)
 
-    # animation = Magick::Image::read("media/missile.png").first.resize(0.3)
+    # animation = Magick::Image::read("#{CURRENT_DIRECTORY}/media/missile.png").first.resize(0.3)
     # @animation = Gosu::Image.new(animation, :tileable => true)
-    @animation = Gosu::Image.new("media/missile.png")
+    @animation = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/missile.png")
 
-    # @animation = Gosu::Image.new("media/missile.png")
+    # @animation = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/missile.png")
     # @color = Gosu::Color.new(0xff_000000)
     # @color.red = rand(255 - 40) + 40
     # @color.green = rand(255 - 40) + 40

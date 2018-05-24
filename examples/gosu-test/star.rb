@@ -5,7 +5,7 @@ class Star
   POINT_VALUE_BASE = 2
   
   def initialize(x = nil, y = nil)
-    @animation = Gosu::Image::load_tiles("media/star.png", 25, 25)
+    @animation = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/star.png", 25, 25)
     @color = Gosu::Color.new(0xff_000000)
     @color.red = rand(255 - 40) + 40
     @color.green = rand(255 - 40) + 40

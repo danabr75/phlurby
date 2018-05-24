@@ -3,7 +3,7 @@ class EnemyBullet < Bullet
   COOLDOWN_DELAY = 30
   
   def initialize(player)
-    @animation = Gosu::Image.new("media/bullet-mini-reverse.png")
+    @animation = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/bullet-mini-reverse.png")
     @x = player.get_x
     @y = player.get_y# - player.get_height
   end

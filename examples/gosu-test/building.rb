@@ -7,9 +7,9 @@ class Building
   attr_accessor :health, :armor, :x, :y
 
   def initialize(x = nil, y = nil)
-    # image = Magick::Image::read("media/building.png").first.resize(0.3)
+    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/building.png").first.resize(0.3)
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("media/building.png")
+    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/building.png")
     @x = rand * 800
     @y = 0 - @image.height
     # puts "NEW BUILDING: #{@x} and #{@y}"
