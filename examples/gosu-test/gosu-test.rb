@@ -172,6 +172,7 @@ class OpenGLIntegration < Gosu::Window
     @pickups = Array.new
 
     @enemies = Array.new
+    @enemies_random_spawn_timer = 100
     
     @font = Gosu::Font.new(20)
     @max_enemies = 4
@@ -284,8 +285,12 @@ class OpenGLIntegration < Gosu::Window
 
     @projectiles.each do |projectile|
       # @pickups = @pickups + projectile.hit_objects(@stars)
-      @pickups = @pickups + projectile.hit_objects(@enemies)
-      @pickups = @pickups + projectile.hit_objects(@buildings)
+      enemy_results = projectile.hit_objects(@enemies)
+      @pickups = @pickups + enemy_results[:drops]
+      @player.score += enemy_results[:point_value]
+      building_results = projectile.hit_objects(@buildings)
+      @pickups = @pickups + building_results[:drops]
+      @player.score += building_results[:point_value]
     end
 
 
@@ -323,7 +328,15 @@ class OpenGLIntegration < Gosu::Window
     # @buildings.push(Building.new()) if rand(500) == 0
     @buildings.push(Building.new()) if rand(100) == 0
 
-    @enemies.push(EnemyPlayer.new()) if rand(100) == 0 && @enemies.count <= @max_enemies
+
+
+    @enemies.push(EnemyPlayer.new()) if rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
+    if @player.time_alive % 500 == 0
+      @max_enemies += 1
+    end
+    if @player.time_alive % 1000 == 0 && @enemies_random_spawn_timer > 5
+      @enemies_random_spawn_timer -= 5
+    end
 
     # Move to enemy mehtods
     @enemies.each do |enemy|
@@ -362,6 +375,7 @@ class OpenGLIntegration < Gosu::Window
     @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Armor: #{@player.armor}", 10, 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Time Alive: #{@player.time_alive}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)
   end
 end

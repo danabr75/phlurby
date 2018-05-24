@@ -39,6 +39,7 @@ class Bullet
 
   def hit_objects(objects)
     drops = []
+    points = 0
     objects.each do |object|
       if Gosu.distance(@x, @y, object.x, object.y) < 30
         # Missile destroyed
@@ -54,9 +55,13 @@ class Bullet
           end
         end
 
+        if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:get_points)
+          points = points + object.get_points
+        end
+        
       end
     end
-    return drops
+    return {drops: drops, point_value: points}
   end
 
   def hit_object(object)

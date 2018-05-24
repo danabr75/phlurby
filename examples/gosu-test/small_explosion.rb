@@ -32,25 +32,26 @@ class SmallExplosion
     # img.draw(@x, @y, ZOrder::Pickups)
 
     # img = @image[Gosu.milliseconds / 100 % @image.size];
-    if @living_time > 0 && (@living_time % 5 == 0)
-      # fraction = (1.0).fdiv(@living_time.to_f)
-      # 50 / 50
-      # 49 / 50
-      fraction = (@time_to_live - @living_time).to_f.fdiv(@time_to_live)
-      if fraction < 1.0 && fraction > 0.05
-        # smoke = Magick::Image::read("media/smoke.png").first.resize(fraction)
-        # @smoke = Gosu::Image.new(smoke, :tileable => true)
-
-        # image = Magick::Image::read("media/starfighterv4.png").first.resize(fraction)
-        # @image = Gosu::Image.new(image, :tileable => true)
-      elsif fraction > 0.05
-        @living_time = @time_to_live
-      end
+    # if @living_time > 0 && (@living_time % 5 == 0)
+    #   # fraction = (1.0).fdiv(@living_time.to_f)
+    #   # 50 / 50
+    #   # 49 / 50
+    #   fraction = (@time_to_live - @living_time).to_f.fdiv(@time_to_live)
+    #   if fraction < 1.0 && fraction > 0.05
+    #   elsif fraction > 0.05
+    #     @living_time = @time_to_live
+    #   end
+    # end
+    # @smoke.draw_rot(@x, @y, ZOrder::SmallExplosions, @y, 0.5, 0.5, 1, 1)
+    # @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::BigExplosions, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    spin_down = 0
+    if @living_time > 0
+      spin_down = (@living_time * @living_time) / 5
     end
-    @smoke.draw_rot(@x, @y, ZOrder::SmallExplosions, @y, 0.5, 0.5, 1, 1)
-    # @image.draw_rot(@x, @y, ZOrder::BigExplosions, @y, 0.5, 0.5, 1, 1)
-    # @image.draw_rot(@x, @y, ZOrder::BigExplosions, @y, 0.5, 0.5, 1, 1)
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::BigExplosions, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    if spin_down > (@living_time * 10)
+      spin_down = @living_time * 10
+    end
+    @image.draw_rot(@x, @y, ZOrder::SmallExplosions, (360 - spin_down), 0.5, 0.5, 1, 1)
 
   end
 

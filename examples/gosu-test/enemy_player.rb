@@ -6,6 +6,7 @@ require_relative 'star.rb'
 class EnemyPlayer < Player
   Speed = 3
   MAX_ATTACK_SPEED = 3.0
+  POINT_VALUE_BASE = 10
   attr_reader :score
   attr_accessor :cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
@@ -23,6 +24,9 @@ class EnemyPlayer < Player
     @armor = 0
   end
 
+  def get_points
+    return POINT_VALUE_BASE
+  end
 
   def is_alive
     @health > 0

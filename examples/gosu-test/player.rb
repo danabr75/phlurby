@@ -4,8 +4,7 @@ require_relative 'missile.rb'
 class Player
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
-  attr_reader :score
-  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets
+  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive
 
   def initialize(x, y)
     # image = Magick::Image::read("media/spaceship.png").first.resize(0.3)
@@ -20,6 +19,7 @@ class Player
     @health = 100
     @armor = 0
     @rockets = 25
+    @time_alive = 0
   end
 
   def get_x
@@ -79,6 +79,7 @@ class Player
   def update
     self.cooldown_wait -= 1 if self.cooldown_wait > 0
     self.secondary_cooldown_wait -= 1 if self.secondary_cooldown_wait > 0
+    @time_alive += 1 if self.is_alive
   end
 
   # def collect_stars(stars)

@@ -7,7 +7,7 @@ ruby '2.4.4'
   # sudo apt install pulseaudio
 gem 'gosu'
 # gem 'gosu-examples'
-# gem 'opengl'
+gem 'opengl'
 # gem 'ruby-opengl'
 # gem 'texplay'
 # gem 'rmagick'

@@ -189,7 +189,7 @@ class GrapplingHook
 
       end
     end
-    return drops
+    return {drops: drops, point_value: 0}
   end
 
 
