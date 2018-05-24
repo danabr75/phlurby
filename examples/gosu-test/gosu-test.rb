@@ -173,6 +173,7 @@ class OpenGLIntegration < Gosu::Window
 
     @enemies = Array.new
     @enemies_random_spawn_timer = 100
+    @enemies_spawner_counter = 0
     
     @font = Gosu::Font.new(20)
     @max_enemies = 4
@@ -329,14 +330,21 @@ class OpenGLIntegration < Gosu::Window
     @buildings.push(Building.new()) if rand(100) == 0
 
 
-
-    @enemies.push(EnemyPlayer.new()) if rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
+    if @player.is_alive && rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
+      (0..@enemies_spawner_counter).each do |count|
+        @enemies.push(EnemyPlayer.new())
+      end
+    end
     if @player.time_alive % 500 == 0
       @max_enemies += 1
     end
     if @player.time_alive % 1000 == 0 && @enemies_random_spawn_timer > 5
       @enemies_random_spawn_timer -= 5
     end
+    if @player.time_alive % 5000 == 0
+      @enemies_spawner_counter += 1
+    end
+
 
     # Move to enemy mehtods
     @enemies.each do |enemy|
@@ -375,7 +383,7 @@ class OpenGLIntegration < Gosu::Window
     @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Armor: #{@player.armor}", 10, 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Time Alive: #{@player.time_alive}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Time Alive: #{@player.time_alive} - #{@enemies_spawner_counter}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)
   end
 end
