@@ -2,6 +2,7 @@
 # for extra rotation coolness!
 class Star
   attr_reader :x, :y
+  POINT_VALUE_BASE = 2
   
   def initialize(x = nil, y = nil)
     @animation = Gosu::Image::load_tiles("media/star.png", 25, 25)
@@ -12,6 +13,12 @@ class Star
     @x = x || rand * 800
     @y = y || 0
   end
+
+
+  def get_points
+    return POINT_VALUE_BASE
+  end
+
 
   def draw  
     img = @animation[Gosu.milliseconds / 100 % @animation.size];

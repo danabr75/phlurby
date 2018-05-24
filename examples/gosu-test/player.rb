@@ -103,7 +103,9 @@ class Player
     pickups.reject! do |pickup|
       if Gosu.distance(@x, @y, pickup.x, pickup.y) < 35 && pickup.respond_to?(:collected_by_player)
         pickup.collected_by_player(self)
-
+        if pickup.respond_to?(:get_points)
+          self.score += pickup.get_points
+        end
         # stop that!
         # @beep.play
         true
