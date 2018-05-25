@@ -49,7 +49,6 @@ class Bullet
         end
 
         if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:drops)
-          # puts "CALLING THE DROP"
           object.drops.each do |drop|
             drops << drop
           end

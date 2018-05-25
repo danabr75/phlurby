@@ -63,7 +63,7 @@ class Player
     @armor = 0
     @rockets = 25
     # @bombs = 0
-    @bombs = 20
+    @bombs = 200
     @time_alive = 0
     @secondary_weapon = "missile"
   end

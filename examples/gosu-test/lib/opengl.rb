@@ -22,6 +22,7 @@
 
 begin
   RUBY_VERSION =~ /(\d+.\d+)/
+  # These requires didn't work on Sam's 2.4.1
   require_relative "opengl/#{$1}/opengl"
 rescue LoadError
   require_relative 'opengl/opengl'

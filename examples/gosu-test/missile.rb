@@ -79,7 +79,7 @@ class Missile
     # Return false when out of screen (gets deleted then)
     @time_alive += 1
 
-    @y > 0
+    @y > 0 && @y < HEIGHT && @x > 0 && @x < WIDTH
   end
 
 
@@ -95,7 +95,6 @@ class Missile
         end
 
         if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:drops)
-          puts "CALLING THE DROP"
           object.drops.each do |drop|
             drops << drop
           end
