@@ -170,6 +170,7 @@ class OpenGLIntegration < Gosu::Window
     
     @game_pause = false
     @can_pause = true
+    @can_toggle_secondary = true
 
     self.caption = "OpenGL Integration"
     
@@ -241,8 +242,11 @@ class OpenGLIntegration < Gosu::Window
       end
 
       if (id == Gosu::KB_P)
-        puts "Freeing up pause"
         @can_pause = true
+      end
+      if (id == Gosu::KB_TAB)
+        puts "TAB UP"
+        @can_toggle_secondary = true
       end
     end
 
@@ -261,6 +265,11 @@ class OpenGLIntegration < Gosu::Window
       @game_pause = !@game_pause
     end
 
+    if Gosu.button_down?(Gosu::KB_TAB) && @can_toggle_secondary
+      puts "TAB HERE"
+      @can_toggle_secondary = false
+      @player.toggle_secondary
+    end
 
     if @player.is_alive && !@game_pause
       @player.update
@@ -276,19 +285,26 @@ class OpenGLIntegration < Gosu::Window
       end
 
 
+
+
+      # if Gosu.button_down?(Gosu::MS_LEFT)
+      #   # puts "MOUSE CLICK"
+      #   if @player.secondary_cooldown_wait <= 0 && @player.rockets > 0
+      #     results = @player.secondary_attack(self.mouse_x, self.mouse_y)
+      #     projectiles = results[:projectiles]
+      #     cooldown = results[:cooldown]
+      #     @player.secondary_cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
+
+      #     projectiles.each do |projectile|
+      #       @player.rockets -= 1
+      #       @projectiles.push(projectile)
+      #     end
+      #   end
+      # end
+
       if Gosu.button_down?(Gosu::MS_LEFT)
         # puts "MOUSE CLICK"
-        if @player.secondary_cooldown_wait <= 0 && @player.rockets > 0
-          results = @player.secondary_attack(self.mouse_x, self.mouse_y)
-          projectiles = results[:projectiles]
-          cooldown = results[:cooldown]
-          @player.secondary_cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
-
-          projectiles.each do |projectile|
-            @player.rockets -= 1
-            @projectiles.push(projectile)
-          end
-        end
+        @projectiles = @projectiles + @player.trigger_secondary_attack(self.mouse_x, self.mouse_y)
       end
 
       if Gosu.button_down?(Gosu::KB_SPACE)
@@ -427,7 +443,9 @@ class OpenGLIntegration < Gosu::Window
     @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Armor: #{@player.armor}", 10, 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    # @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @player.secondary_weapon == 'missile'
+    # @font.draw("Bombs: #{@player.bombs}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @player.secondary_weapon == 'bomb'
+    @font.draw("#{@player.get_secondary_name}s: #{@player.get_secondary_ammo_count}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Time Alive: #{@player.time_alive}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Level: #{@enemies_spawner_counter + 1}", 10, 100, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)

@@ -1,11 +1,53 @@
 require_relative 'bullet.rb'
 require_relative 'missile.rb'
+require_relative 'bomb.rb'
 
 class Player
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
-  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive
+  attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive, :bombs, :secondary_weapon
   MAX_HEALTH = 200
+
+  SECONDARY_WEAPONS = %w[missile bomb]
+
+  def toggle_secondary
+    current_index = SECONDARY_WEAPONS.index(@secondary_weapon)
+    if current_index == SECONDARY_WEAPONS.count - 1
+        puts 1
+      @secondary_weapon = SECONDARY_WEAPONS[0]
+    else
+      puts 2
+      @secondary_weapon = SECONDARY_WEAPONS[current_index + 1]
+    end
+  end
+
+  def get_secondary_ammo_count
+    return case @secondary_weapon
+    when 'bomb'
+      self.bombs
+    else
+      self.rockets
+    end
+  end
+
+
+  def decrement_secondary_ammo_count
+    return case @secondary_weapon
+    when 'bomb'
+      self.bombs -= 1
+    else
+      self.rockets -= 1
+    end
+  end
+
+  def get_secondary_name
+    return case @secondary_weapon
+    when 'bomb'
+      'Bomb'
+    else
+      'Rocket'
+    end
+  end
 
   def initialize(x, y)
     # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/spaceship.png").first.resize(0.3)
@@ -20,7 +62,10 @@ class Player
     @health = 100
     @armor = 0
     @rockets = 25
+    # @bombs = 0
+    @bombs = 20
     @time_alive = 0
+    @secondary_weapon = "missile"
   end
 
   def get_x
@@ -66,11 +111,36 @@ class Player
     }
   end
 
+  def trigger_secondary_attack mouse_x, mouse_y
+    return_projectiles = []
+    if self.secondary_cooldown_wait <= 0 && self.get_secondary_ammo_count > 0
+      results = self.secondary_attack(mouse_x, mouse_y)
+      projectiles = results[:projectiles]
+      cooldown = results[:cooldown]
+      self.secondary_cooldown_wait = cooldown.to_f.fdiv(self.attack_speed)
+
+      projectiles.each do |projectile|
+        self.decrement_secondary_ammo_count
+        return_projectiles.push(projectile)
+      end
+    end
+    return return_projectiles
+  end
+
   def secondary_attack mouse_x = nil, mouse_y = nil
-    return {
-      projectiles: [Missile.new(self, mouse_x, mouse_y)],
-      cooldown: Missile::COOLDOWN_DELAY
-    }
+    second_weapon = case @secondary_weapon
+    when 'bomb'
+      {
+        projectiles: [Bomb.new(self, mouse_x, mouse_y)],
+        cooldown: Bomb::COOLDOWN_DELAY
+      }
+    else
+      {
+        projectiles: [Missile.new(self, mouse_x, mouse_y)],
+        cooldown: Missile::COOLDOWN_DELAY
+      }
+    end
+    return second_weapon
   end
 
   def draw

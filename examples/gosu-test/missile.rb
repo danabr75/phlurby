@@ -6,14 +6,19 @@ class Missile
   INITIAL_DELAY  = 2
   SPEED_INCREASE_FACTOR = 0.5
   DAMAGE = 50
+  AOE = 30
   
   MAX_CURSOR_FOLLOW = 4
+
+  def get_image
+    Gosu::Image.new("#{CURRENT_DIRECTORY}/media/missile.png")
+  end
 
   def initialize(object, mouse_x = nil, mouse_y = nil, side = nil)
 
     # animation = Magick::Image::read("#{CURRENT_DIRECTORY}/media/missile.png").first.resize(0.3)
     # @animation = Gosu::Image.new(animation, :tileable => true)
-    @animation = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/missile.png")
+    @image = get_image
 
     # @animation = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/missile.png")
     # @color = Gosu::Color.new(0xff_000000)
@@ -40,7 +45,7 @@ class Missile
     # puts @animation.size
     # puts 100 % @animation.size
     # puts "Gosu.milliseconds / 100 % @animation.size: #{Gosu.milliseconds / 100 % @animation.size}"
-    img = @animation;
+    img = @image;
     # img.draw(@x, @y, ZOrder::Bullets, :add)
     img.draw(@x, @y, ZOrder::Bullets, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
     # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
@@ -50,7 +55,7 @@ class Missile
     mouse_x = @mouse_start_x
     mouse_y = @mouse_start_y
     if @time_alive > INITIAL_DELAY
-      new_speed = STARTING_SPEED + (@time_alive * SPEED_INCREASE_FACTOR)
+      new_speed = STARTING_SPEED + (SPEED_INCREASE_FACTOR > 0 ? @time_alive * SPEED_INCREASE_FACTOR : 0)
       new_speed = MAX_SPEED if new_speed > MAX_SPEED
       @y -= new_speed
     end
@@ -82,7 +87,7 @@ class Missile
     drops = []
     points = 0
     objects.each do |object|
-      if Gosu.distance(@x, @y, object.x, object.y) < 30
+      if Gosu.distance(@x, @y, object.x, object.y) < AOE
         # Missile destroyed
         @y = -100
         if object.respond_to?(:health) && object.respond_to?(:take_damage)
@@ -108,7 +113,7 @@ class Missile
 
   def hit_object(object)
     return_value = nil
-    if Gosu.distance(@x, @y, object.x, object.y) < 30
+    if Gosu.distance(@x, @y, object.x, object.y) < AOE
       @y = -50
       return_value = DAMAGE
     else
