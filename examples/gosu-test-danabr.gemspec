@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name        = 'gosu-test-danabr'
-  s.version     = '0.1.1'
+  s.version     = '0.1.3'
   s.date        = '2018-05-24'
   s.summary     = "Hola!"
   s.description = "A simple gosu test"
@@ -18,5 +18,5 @@ Gem::Specification.new do |s|
   # s.add_development_dependency 'opengl', '0.10.0'
   s.add_development_dependency 'ocra', '1.3.10'
   s.add_runtime_dependency 'gosu', '0.13.3'
-  s.add_runtime_dependency 'opengl', '0.10.0'
+  s.add_runtime_dependency 'danabr75-opengl', '0.10.0'
 end

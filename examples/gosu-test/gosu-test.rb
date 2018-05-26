@@ -46,7 +46,10 @@ MEDIA_DIRECTORY   = File.expand_path('../', __FILE__) + "/media"
   #   end
   #   private mn
   # end
+# For WINDOWS - using local lip
 # require_relative 'lib/opengl.rb'
+# FOR Linux\OSX - using opengl gem
+require 'opengl'
 
 Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| require f }
 

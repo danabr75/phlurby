@@ -8,7 +8,8 @@ source 'https://rubygems.org'
   # sudo apt install pulseaudio
 gem 'gosu'
 # gem 'gosu-examples'
-gem 'opengl'
+# FORKED from opengl (0.10.0)
+gem 'danabr75-opengl'
 # gem 'ruby-opengl'
 # gem 'texplay'
 # gem 'rmagick'

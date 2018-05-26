@@ -1,20 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    danabr75-opengl (0.10.0)
     gosu (0.13.3)
     ocra (1.3.10)
-    opengl (0.10.0)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
+  danabr75-opengl
   gosu
   ocra
-  opengl
-
-RUBY VERSION
-   ruby 2.4.4p296
 
 BUNDLED WITH
    1.16.2
