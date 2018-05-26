@@ -15,10 +15,8 @@ class Player < GeneralObject
   def toggle_secondary
     current_index = SECONDARY_WEAPONS.index(@secondary_weapon)
     if current_index == SECONDARY_WEAPONS.count - 1
-        puts 1
       @secondary_weapon = SECONDARY_WEAPONS[0]
     else
-      puts 2
       @secondary_weapon = SECONDARY_WEAPONS[current_index + 1]
     end
   end
@@ -64,7 +62,8 @@ class Player < GeneralObject
     @health = 100
     @armor = 0
     @rockets = 25
-    @bombs = 0
+    # @rocket_launcher = {}
+    @bombs = 3
     @time_alive = 0
     @secondary_weapon = "missile"
   end
@@ -98,14 +97,10 @@ class Player < GeneralObject
 
 
   def attack mouse_x = nil, mouse_y = nil
-    test = {
+    return {
       projectiles: [Bullet.new(self, mouse_x, mouse_y, {side: 'left'}), Bullet.new(self, mouse_x, mouse_y, {side: 'right'})],
       cooldown: Bullet::COOLDOWN_DELAY
     }
-
-    puts "NEW BULLET: #{test[:projectiles]}"
-
-    return test
   end
 
   def trigger_secondary_attack mouse_x, mouse_y
@@ -124,6 +119,14 @@ class Player < GeneralObject
     return return_projectiles
   end
 
+  # def toggle_state_secondary_attack
+  #   second_weapon = case @secondary_weapon
+  #   when 'bomb'
+  #   else
+  #   end
+  #   return second_weapon
+  # end
+
   def secondary_attack mouse_x = nil, mouse_y = nil
     second_weapon = case @secondary_weapon
     when 'bomb'
@@ -132,10 +135,17 @@ class Player < GeneralObject
         cooldown: Bomb::COOLDOWN_DELAY
       }
     else
-      {
-        projectiles: [Missile.new(self, mouse_x, mouse_y)],
-        cooldown: Missile::COOLDOWN_DELAY
-      }
+      if get_secondary_ammo_count > 1
+        {
+          projectiles: [Missile.new(self, mouse_x, mouse_y, {side: 'left'}), Missile.new(self, mouse_x, mouse_y, {side: 'right'})],
+          cooldown: Missile::COOLDOWN_DELAY
+        }
+      else get_secondary_ammo_count == 1
+        {
+          projectiles: [Missile.new(self, mouse_x, mouse_y)],
+          cooldown: Missile::COOLDOWN_DELAY
+        }
+      end
     end
     return second_weapon
   end

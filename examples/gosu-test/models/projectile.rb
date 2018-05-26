@@ -43,6 +43,7 @@ class Projectile < GeneralObject
     if @angle < 0
       @angle = 360 - @angle.abs
     end
+    # puts "INIT NEW ANGLE: #{@angle}"
   end
 
   # def get_image
@@ -71,9 +72,9 @@ class Projectile < GeneralObject
   end
 
   def hit_object(object)
-    test = hit_objects([[object]])
+    return hit_objects([[object]])
     # puts "PROJECTILE hit object: #{test}"
-    return test
+    # return test
   end
 
   def hit_objects(object_groups)
@@ -93,8 +94,8 @@ class Projectile < GeneralObject
           other_object = [[(object.x - object.get_width / 2), (object.y - object.get_height / 2)], [(object.x + object.get_width / 2), (object.y + object.get_height / 2)]]
           hit_object = rec_intersection(self_object, other_object)
         else
-          puts "HIT OBJECT DETECTION: proj-size: #{(self.get_size / 2)}"
-          puts "HIT OBJECT DETECTION:  obj-size: #{(self.get_size / 2)}"
+          # puts "HIT OBJECT DETECTION: proj-size: #{(self.get_size / 2)}"
+          # puts "HIT OBJECT DETECTION:  obj-size: #{(self.get_size / 2)}"
           hit_object = Gosu.distance(@x, @y, object.x, object.y) < self.get_radius + object.get_radius
         end
         if hit_object

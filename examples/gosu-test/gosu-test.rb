@@ -30,10 +30,10 @@ MEDIA_DIRECTORY   = File.expand_path('../', __FILE__) + "/media"
 # EXCLUDE_CURRENT_FOLDER_LOADING = ['irb_requirements.rb', File.basename(__FILE__)]
 
 
-puts "CURRENT_DIRECTORY: #{CURRENT_DIRECTORY}"
-puts "MEDIA_DIRECTORY: #{MEDIA_DIRECTORY}"
-puts "__FILE__: #{__FILE__}"
-puts File.basename(__FILE__)
+# puts "CURRENT_DIRECTORY: #{CURRENT_DIRECTORY}"
+# puts "MEDIA_DIRECTORY: #{MEDIA_DIRECTORY}"
+# puts "__FILE__: #{__FILE__}"
+# puts File.basename(__FILE__)
 
 # require 'opengl'
 require_relative 'lib/opengl.rb'
@@ -254,7 +254,7 @@ class OpenGLIntegration < Gosu::Window
         @can_pause = true
       end
       if (id == Gosu::KB_TAB)
-        puts "TAB UP"
+        # puts "TAB UP"
         @can_toggle_secondary = true
       end
     end
@@ -264,18 +264,14 @@ class OpenGLIntegration < Gosu::Window
       OpenGLIntegration.reset(self)
     end
 
-    if Gosu.button_down?(Gosu::KB_P)
-      puts "FAKE GAME PAUSE: #{@game_pause} and #{@can_pause}"
-    end
-
     if Gosu.button_down?(Gosu::KB_P) && @can_pause
       @can_pause = false
-      puts "GAME PAUSE: #{@game_pause}"
+      # puts "GAME PAUSE: #{@game_pause}"
       @game_pause = !@game_pause
     end
 
     if Gosu.button_down?(Gosu::KB_TAB) && @can_toggle_secondary
-      puts "TAB HERE"
+      # puts "TAB HERE"
       @can_toggle_secondary = false
       @player.toggle_secondary
     end
@@ -364,7 +360,7 @@ class OpenGLIntegration < Gosu::Window
 
       if @player.is_alive && @grappling_hook
         grap_result = @grappling_hook.update(self.mouse_x, self.mouse_y, @player)
-        puts "Setting grap to nil - #{grap_result}" if !grap_result
+        # puts "Setting grap to nil - #{grap_result}" if !grap_result
         @grappling_hook = nil if !grap_result
       end
 
@@ -439,7 +435,9 @@ class OpenGLIntegration < Gosu::Window
 
     @player.draw if @player.is_alive
     @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
-    @font.draw("You are dead! Press ESC to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("You are dead!", WIDTH / 2 - 50, HEIGHT / 2 - 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("Press ESC to quit", WIDTH / 2 - 50, HEIGHT / 2 - 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("Press M to Restart", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Paused", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
     @enemies.each { |enemy| enemy.draw }
     @projectiles.each { |projectile| projectile.draw() }

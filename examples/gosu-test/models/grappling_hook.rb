@@ -105,12 +105,12 @@ class GrapplingHook < GeneralObject
     # end
     return_value = true
     if !self.active
-      puts "IS NOT ACTIVE"
+      # puts "IS NOT ACTIVE"
       mouse_x = object.get_x
       mouse_y = object.get_y
 
       if Gosu.distance(@x, @y, object.x, object.y) < 35
-        puts "DELETE GRAPPHLE HOOK"
+        # puts "DELETE GRAPPHLE HOOK"
         return_value = false
       end
 
@@ -147,7 +147,7 @@ class GrapplingHook < GeneralObject
       @y = @y + difference
     end
 
-    puts "GRAPPLING HOOK REUTRN: #{return_value}"
+    # puts "GRAPPLING HOOK REUTRN: #{return_value}"
     return return_value
     # Return false when out of screen (gets deleted then)
     # @time_alive += 1
@@ -183,7 +183,7 @@ class GrapplingHook < GeneralObject
         end
 
         if object.respond_to?(:is_alive) && !object.is_alive && object.respond_to?(:drops)
-          puts "CALLING THE DROP"
+          # puts "CALLING THE DROP"
           object.drops.each do |drop|
             drops << drop
           end
