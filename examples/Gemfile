@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
-ruby '2.4.4'
+# Works best on:
+# ruby '2.4.4'
 
 # gem 'ruby2d'
 # Windows: sudo apt-get install libsdl2-dev

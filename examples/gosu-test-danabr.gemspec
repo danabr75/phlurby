@@ -2,14 +2,15 @@
 
 Gem::Specification.new do |s|
   s.name        = 'gosu-test-danabr'
-  s.version     = '0.0.10'
+  s.version     = '0.1.1'
   s.date        = '2018-05-24'
   s.summary     = "Hola!"
   s.description = "A simple gosu test"
   s.authors     = ["Ben Dana"]
   s.email       = 'benrdana@gmail.com'
   s.executables   = ["gosu-test.sh"]
-  s.files       = Dir['gosu-test/lib/**/*'] + Dir['gosu-test/media/**/*'] + Dir['gosu-test/*']
+  # s.files       = Dir['gosu-test/lib/**/*'] + Dir['gosu-test/media/**/*'] + Dir['gosu-test/*']
+  s.files       = Dir['gosu-test/media/**/*'] + Dir['gosu-test/*']
   s.homepage    =
     'http://rubygems.org/gems/hola'
   s.license       = 'MIT'

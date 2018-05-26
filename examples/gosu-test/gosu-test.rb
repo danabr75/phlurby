@@ -27,30 +27,27 @@ require 'gosu'
 
 CURRENT_DIRECTORY = File.expand_path('../', __FILE__)
 MEDIA_DIRECTORY   = File.expand_path('../', __FILE__) + "/media"
-# EXCLUDE_CURRENT_FOLDER_LOADING = ['irb_requirements.rb', File.basename(__FILE__)]
 
+# ONLY ENABLE FOR WINDOWS COMPILATION
+# Place opengl lib in lib library
+# Replace the meths list iteration with the following (added rescue blocks):
+  # meths.each do |mn|
+  #   define_singleton_method(mn) do |*args,&block|
+  #     begin
+  #       implementation.send(mn, *args, &block)
+  #     rescue
+  #     end
+  #   end
+  #   define_method(mn) do |*args,&block|
+  #     begin
+  #       implementation.send(mn, *args, &block)
+  #     rescue
+  #     end
+  #   end
+  #   private mn
+  # end
+# require_relative 'lib/opengl.rb'
 
-# puts "CURRENT_DIRECTORY: #{CURRENT_DIRECTORY}"
-# puts "MEDIA_DIRECTORY: #{MEDIA_DIRECTORY}"
-# puts "__FILE__: #{__FILE__}"
-# puts File.basename(__FILE__)
-
-# require 'opengl'
-require_relative 'lib/opengl.rb'
-# require 'rmagick'
-# require_relative 'star.rb'
-# require_relative 'bullet.rb'
-# require_relative 'enemy_bullet.rb'
-# require_relative 'missile.rb'
-# require_relative 'player.rb'
-# require_relative 'enemy_player.rb'
-# require_relative 'cursor.rb'
-# require_relative 'building.rb'
-# require_relative 'grappling_hook.rb'
-
-# Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; require_relative f if !EXCLUDE_CURRENT_FOLDER_LOADING.include?(File.basename(f)) }
-# Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; require_relative f if !EXCLUDE_CURRENT_FOLDER_LOADING.include?(File.basename(f)) }
-# Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; puts "#{File.basename(f)} != #{File.basename(__FILE__)} is it? #{File.basename(f) != File.basename(__FILE__)} " }
 Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| require f }
 
 # require_relative 'media'
