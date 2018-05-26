@@ -11,6 +11,7 @@ class Projectile < GeneralObject
   DAMAGE = 5
   AOE = 0
   MAX_CURSOR_FOLLOW = 5 # Do we need this if we have a max speed?
+  ADVANCED_HIT_BOX_DETECTION = false
 
 
   def initialize(object, mouse_x = nil, mouse_y = nil, options = {})
@@ -83,17 +84,28 @@ class Projectile < GeneralObject
     object_groups.each do |group|
       group.each do |object|
         break if hit_object
+        # don't hit a dead object
+        if object.respond_to?(:health) && object.respond_to?(:is_alive) && !object.is_alive
+          next
+        end
         # if Gosu.distance(@x, @y, object.x, object.y) < (self.get_size / 2)
-        other_object = [[(object.x - object.get_width / 2), (object.y - object.get_height / 2)], [(object.x + object.get_width / 2), (object.y + object.get_height / 2)]]
-        if rec_intersection(self_object, other_object)
-          puts "HIT OBJECT"
-          hit_object = true
+        if self.class.get_advanced_hit_box_detection
+          other_object = [[(object.x - object.get_width / 2), (object.y - object.get_height / 2)], [(object.x + object.get_width / 2), (object.y + object.get_height / 2)]]
+          hit_object = rec_intersection(self_object, other_object)
+        else
+          puts "HIT OBJECT DETECTION: proj-size: #{(self.get_size / 2)}"
+          puts "HIT OBJECT DETECTION:  obj-size: #{(self.get_size / 2)}"
+          hit_object = Gosu.distance(@x, @y, object.x, object.y) < self.get_radius + object.get_radius
+        end
+        if hit_object
+          # puts "HIT OBJECT"
+          # hit_object = true
           if self.class.get_aoe <= 0
-            puts "shout be here"
-            puts "1: #{object.respond_to?(:health)}"
-            puts "2: #{object.respond_to?(:take_damage)}"
+            # puts "shout be here"
+            # puts "1: #{object.respond_to?(:health)}"
+            # puts "2: #{object.respond_to?(:take_damage)}"
             if object.respond_to?(:health) && object.respond_to?(:take_damage)
-              puts "OBJECT TALING DAMAGE: #{self.class.get_damage}"
+              # puts "OBJECT TALING DAMAGE: #{self.class.get_damage}"
               object.take_damage(self.class.get_damage)
             end
 
@@ -163,6 +175,10 @@ class Projectile < GeneralObject
   def self.get_max_cursor_follow
     self::MAX_CURSOR_FOLLOW
   end
+  def self.get_advanced_hit_box_detection
+    self::ADVANCED_HIT_BOX_DETECTION
+  end
+
 
   # rect1[0][0] and rect2[0][0] are the two leftmost x-coordinates of the rectangles,
   # Rectangles are represented as a pair of coordinate-pairs: the

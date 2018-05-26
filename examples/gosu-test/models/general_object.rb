@@ -27,6 +27,10 @@ class GeneralObject
     (@image.height * @image.width) / 2
   end
 
+  def get_radius
+    ((@image.height + @image.width) / 2) / 2
+  end  
+
   def update mouse_x = nil, mouse_y = nil
     # Inherit, add logic, then call this to calculate whether it's still visible.
     @time_alive ||= 0 # Temp solution

@@ -60,6 +60,7 @@ Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| require f }
 
 
 WIDTH, HEIGHT = 640, 480
+# WIDTH, HEIGHT = 1080, 720
 
 module ZOrder
   Background, Building, Cursor, Projectiles, SmallExplosions, BigExplosions, Pickups, Enemy, Player, UI = *0..10
@@ -215,6 +216,7 @@ class OpenGLIntegration < Gosu::Window
     # @pointer = Gosu::Image.new("#{MEDIA_DIRECTORY}/bullet-mini.png")
     # @px = 0
     # @py = 0
+    @ui_y = 10
   end
 
   # def update
@@ -235,7 +237,7 @@ class OpenGLIntegration < Gosu::Window
     # @py = self.mouse_y # this method returns the y coordinate of the mouse
     # puts "PX: #{@px} - PY: #{@py}"
 
-    if Gosu.button_down?(Gosu::KB_Q)
+    if Gosu.button_down?(Gosu::KbEscape)
       close!
     end
 
@@ -437,7 +439,7 @@ class OpenGLIntegration < Gosu::Window
 
     @player.draw if @player.is_alive
     @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
-    @font.draw("You are dead! Press Q to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("You are dead! Press ESC to quit", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Paused", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
     @enemies.each { |enemy| enemy.draw }
     @projectiles.each { |projectile| projectile.draw() }
@@ -445,17 +447,43 @@ class OpenGLIntegration < Gosu::Window
     # @stars.each { |star| star.draw }
     @pickups.each { |pickup| pickup.draw }
     @buildings.each { |building| building.draw }
-    @font.draw("Score: #{@player.score}", 10, 10, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Health: #{@player.health}", 10, 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Armor: #{@player.armor}", 10, 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Score: #{@player.score}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    # @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Health: #{@player.health}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Armor: #{@player.armor}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     # @font.draw("Rockets: #{@player.rockets}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @player.secondary_weapon == 'missile'
     # @font.draw("Bombs: #{@player.bombs}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @player.secondary_weapon == 'bomb'
-    @font.draw("#{@player.get_secondary_name}s: #{@player.get_secondary_ammo_count}", 10, 70, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Time Alive: #{@player.time_alive}", 10, 85, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
-    @font.draw("Level: #{@enemies_spawner_counter + 1}", 10, 100, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Weapon: #{@player.get_secondary_name}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Rockets: #{@player.rockets}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Bombs: #{@player.bombs}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @player.bombs > 0
+    @font.draw("Time Alive: #{@player.time_alive}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
+    @font.draw("Level: #{@enemies_spawner_counter + 1}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @gl_background.draw(ZOrder::Background)
+    reset_font_ui_y
+  end
+
+  def get_font_ui_y
+    return_value = @ui_y
+    @ui_y += 15 
+    return return_value
+  end
+  def reset_font_ui_y
+    @ui_y = 10
   end
 end
 
 OpenGLIntegration.new.show if __FILE__ == $0
+
+
+
+
+
+
+
+
+
+
+
+
+
+

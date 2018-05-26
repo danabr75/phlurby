@@ -32,9 +32,9 @@ class Star < Pickup
     25
   end
 
-  def get_size
-    25
-  end
+  def get_radius
+    13
+  end  
 
 
   def draw 

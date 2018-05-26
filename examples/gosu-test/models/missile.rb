@@ -10,6 +10,7 @@ class Missile < Projectile
   AOE = 0
   
   MAX_CURSOR_FOLLOW = 4
+  ADVANCED_HIT_BOX_DETECTION = true
 
   # def hit_objects(object_groups)
   #   puts "HERE: #{self.class.get_damage}"
