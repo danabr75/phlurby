@@ -8,6 +8,10 @@ class Player < GeneralObject
 
   SECONDARY_WEAPONS = %w[missile bomb]
 
+  def take_damage damage
+    @health -= damage
+  end
+
   def toggle_secondary
     current_index = SECONDARY_WEAPONS.index(@secondary_weapon)
     if current_index == SECONDARY_WEAPONS.count - 1

@@ -17,14 +17,16 @@ class Bomb < Projectile
   end
 
   def draw
-    @image.draw(@x, @y, ZOrder::Projectiles, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    # @image.draw(@x, @y, ZOrder::Projectiles, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    # @image.draw(@x, @y, ZOrder::Projectiles, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    @image.draw_rot(@x, @y, ZOrder::Projectiles, @y, 0.5, 0.5, 1, 1)
   end
   
 
   def update mouse_x = nil, mouse_y = nil
-    vx = STARTING_SPEED * Math.cos(@angle * Math::PI / 180)
+    vx = self.class.get_starting_speed * Math.cos(@angle * Math::PI / 180)
 
-    vy =  STARTING_SPEED * Math.sin(@angle * Math::PI / 180)
+    vy =  self.class.get_starting_speed * Math.sin(@angle * Math::PI / 180)
     # Because our y is inverted
     vy = vy * -1
 

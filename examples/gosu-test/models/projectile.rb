@@ -70,9 +70,11 @@ class Projectile < GeneralObject
   end
 
   def hit_object(object)
-    return hit_objects([[object]])
+    test = hit_objects([[object]])
+    # puts "PROJECTILE hit object: #{test}"
+    return test
   end
-  
+
   def hit_objects(object_groups)
     drops = []
     points = 0
@@ -84,8 +86,12 @@ class Projectile < GeneralObject
         # if Gosu.distance(@x, @y, object.x, object.y) < (self.get_size / 2)
         other_object = [[(object.x - object.get_width / 2), (object.y - object.get_height / 2)], [(object.x + object.get_width / 2), (object.y + object.get_height / 2)]]
         if rec_intersection(self_object, other_object)
+          puts "HIT OBJECT"
           hit_object = true
           if self.class.get_aoe <= 0
+            puts "shout be here"
+            puts "1: #{object.respond_to?(:health)}"
+            puts "2: #{object.respond_to?(:take_damage)}"
             if object.respond_to?(:health) && object.respond_to?(:take_damage)
               puts "OBJECT TALING DAMAGE: #{self.class.get_damage}"
               object.take_damage(self.class.get_damage)

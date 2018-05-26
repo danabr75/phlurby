@@ -51,7 +51,7 @@ require_relative 'lib/opengl.rb'
 # Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; require_relative f if !EXCLUDE_CURRENT_FOLDER_LOADING.include?(File.basename(f)) }
 # Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; require_relative f if !EXCLUDE_CURRENT_FOLDER_LOADING.include?(File.basename(f)) }
 # Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; puts "#{File.basename(f)} != #{File.basename(__FILE__)} is it? #{File.basename(f) != File.basename(__FILE__)} " }
-Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| puts "LOADING: #{f}"; require f }
+Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| require f }
 
 # require_relative 'media'
 # Dir["/path/to/directory/*.rb"].each {|file| require file }

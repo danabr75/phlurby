@@ -36,11 +36,14 @@ class Building < GeneralObject
   end
 
   def drops
-    if rand(5) == 4
-      [HealthPack.new(@x, @y)]
-    else
-      [MissilePack.new(@x, @y)]
-    end
+    # rand_num = rand(10)
+    # if rand(10) == 9
+    #   [HealthPack.new(@x, @y)]
+    # elsif rand(10) == 8
+      [BombPack.new(@x, @y)]
+    # else
+    #   [MissilePack.new(@x, @y)]
+    # end
   end
 
   def draw

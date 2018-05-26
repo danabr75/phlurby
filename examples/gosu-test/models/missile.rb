@@ -41,8 +41,8 @@ class Missile < Projectile
   def update mouse_x = nil, mouse_y = nil
     mouse_x = @mouse_start_x
     mouse_y = @mouse_start_y
-    if @time_alive > self.get_initial_delay
-      new_speed = self.get_starting_speed + (self.get_speed_increase_factor > 0 ? @time_alive * self.get_speed_increase_factor : 0)
+    if @time_alive > self.class.get_initial_delay
+      new_speed = self.class.get_starting_speed + (self.class.get_speed_increase_factor > 0 ? @time_alive * self.class.get_speed_increase_factor : 0)
       new_speed = self.class.get_max_speed if new_speed > self.class.get_max_speed
       @y -= new_speed
     end
@@ -50,22 +50,23 @@ class Missile < Projectile
     # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
     if @x > mouse_x
       difference = @x - mouse_x
-      if difference > self.get_max_cursor_follow
-        difference = self.get_max_cursor_follow
+      if difference > self.class.get_max_cursor_follow
+        difference = self.class.get_max_cursor_follow
       end
       @x = @x - difference
     else
       # Cursor is right of the missle, missile needs to go right. @x needs to get bigger. @x is smaller than mouse_x
       difference = mouse_x - @x
-      if difference > self.get_max_cursor_follow
-        difference = self.get_max_cursor_follow
+      if difference > self.class.get_max_cursor_follow
+        difference = self.class.get_max_cursor_follow
       end
       @x = @x + difference
     end
 
     # Return false when out of screen (gets deleted then)
-    @time_alive += 1
+    # @time_alive += 1
 
-    @y > 0 && @y < HEIGHT && @x > 0 && @x < WIDTH
+    # @y > 0 && @y < HEIGHT && @x > 0 && @x < WIDTH
+    super(mouse_x, mouse_y)
   end
 end
