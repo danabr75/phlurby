@@ -1,4 +1,6 @@
-class GrapplingHook
+require_relative 'general_object.rb'
+
+class GrapplingHook < GeneralObject
   attr_reader :x, :y, :time_alive, :active
   attr_accessor :active
 
@@ -13,13 +15,13 @@ class GrapplingHook
 
   def initialize(object)
 
-    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/grappling_hook.png").first.resize(0.1)
+    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/grappling_hook.png").first.resize(0.1)
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/grappling_hook.png")
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/grappling_hook.png")
 
-    # chain = Magick::Image::read("#{CURRENT_DIRECTORY}/media/chain.png").first.resize(0.1)
+    # chain = Magick::Image::read("#{MEDIA_DIRECTORY}/chain.png").first.resize(0.1)
     # @chain = Gosu::Image.new(chain, :tileable => true)
-    @chain = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/chain.png")
+    @chain = Gosu::Image.new("#{MEDIA_DIRECTORY}/chain.png")
 
     @x = object.get_x - (object.get_width / 2)
     @y = object.get_y
@@ -36,9 +38,9 @@ class GrapplingHook
     # puts @animation.size
     # puts 100 % @animation.size
     # puts "Gosu.milliseconds / 100 % @animation.size: #{Gosu.milliseconds / 100 % @animation.size}"
-    # img.draw(@x, @y, ZOrder::Bullets, :add)
+    # img.draw(@x, @y, ZOrder::Projectiles, :add)
     # puts "11: #{@x} and #{@y}"
-    # @image.draw(@x, @y, ZOrder::Bullets)
+    # @image.draw(@x, @y, ZOrder::Projectiles)
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Cursor)
 
     chain_x = @x
@@ -113,10 +115,6 @@ class GrapplingHook
       end
 
     end
-
-
-
-
 
     # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
     if @x > mouse_x

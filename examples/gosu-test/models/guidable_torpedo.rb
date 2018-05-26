@@ -1,4 +1,5 @@
-# class GuidableTorpedo
+# require_relative 'general_object.rb'
+# class GuidableTorpedo < GeneralObject
 #   attr_reader :x, :y, :time_alive
 #   COOLDOWN_DELAY = 30
 #   MAX_SPEED      = 25
@@ -11,7 +12,7 @@
 
 #   def initialize(object)
 
-#     image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/missile.png").first.resize(0.3)
+#     image = Magick::Image::read("#{MEDIA_DIRECTORY}/missile.png").first.resize(0.3)
 #     @image = Gosu::Image.new(image, :tileable => true)
 
 #     @x = object.get_x - (object.get_width / 2)
@@ -27,9 +28,9 @@
 #     # puts @animation.size
 #     # puts 100 % @animation.size
 #     # puts "Gosu.milliseconds / 100 % @animation.size: #{Gosu.milliseconds / 100 % @animation.size}"
-#     # img.draw(@x, @y, ZOrder::Bullets, :add)
+#     # img.draw(@x, @y, ZOrder::Projectiles, :add)
 #     puts "11: #{@x} and #{@y}"
-#     @image.draw(@x, @y, ZOrder::Bullets)
+#     @image.draw(@x, @y, ZOrder::Projectiles)
 #     # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
 #   end
   

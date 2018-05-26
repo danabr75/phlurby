@@ -1,10 +1,12 @@
-class HealthPack
+require_relative 'general_object.rb'
+
+class HealthPack < GeneralObject
   attr_reader :x, :y
 
   HEALTH_BOOST = 25
 
   def initialize(x = nil, y = nil)
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/health_pack_0.png", :tileable => true)
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/health_pack_0.png", :tileable => true)
     @x = x
     @y = y
   end
@@ -27,14 +29,14 @@ class HealthPack
     # puts "new_image_rot: #{image_rot}"
     end 
     image_rot = 12 if image_rot == 13
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/health_pack_#{image_rot}.png", :tileable => true)
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/health_pack_#{image_rot}.png", :tileable => true)
 
     # @image.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, 1, 1)
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Pickups)
   end
 
 
-  def update
+  def update mouse_x = nil, mouse_y = nil
     @y += GLBackground::SCROLLING_SPEED 
 
     @y < HEIGHT + @image.height

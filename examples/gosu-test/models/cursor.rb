@@ -1,9 +1,17 @@
-class Cursor
+require_relative 'general_object.rb'
+class Cursor < GeneralObject
   # attr_reader :img, :visible, :imgObj
+
+
+  def get_image
+    Gosu::Image.new("#{MEDIA_DIRECTORY}/crosshair.png")
+  end
+
+  
   def initialize
-    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/crosshair.png").first#.resize(0.3)
+    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/crosshair.png").first#.resize(0.3)
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/crosshair.png")
+    @image = get_image
   end
 
 

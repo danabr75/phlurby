@@ -1,16 +1,13 @@
-require_relative 'bullet.rb'
-require_relative 'missile.rb'
-require_relative 'missile_pack.rb'
-require_relative 'health_pack.rb'
+require_relative 'general_object.rb'
 
-class Building
+class Building < GeneralObject
   POINT_VALUE_BASE = 1
   attr_accessor :health, :armor, :x, :y
 
   def initialize(x = nil, y = nil)
-    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/building.png").first.resize(0.3)
+    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/building.png").first.resize(0.3)
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/building.png")
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/building.png")
     @x = rand * 800
     @y = 0 - @image.height
     # puts "NEW BUILDING: #{@x} and #{@y}"

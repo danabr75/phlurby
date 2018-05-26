@@ -1,8 +1,6 @@
-require_relative 'bullet.rb'
-require_relative 'missile.rb'
-require_relative 'bomb.rb'
+require_relative 'general_object.rb'
 
-class Player
+class Player < GeneralObject
   Speed = 7
   MAX_ATTACK_SPEED = 3.0
   attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive, :bombs, :secondary_weapon
@@ -50,10 +48,10 @@ class Player
   end
 
   def initialize(x, y)
-    # image = Magick::Image::read("#{CURRENT_DIRECTORY}/media/spaceship.png").first.resize(0.3)
+    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/spaceship.png").first.resize(0.3)
     # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/spaceship.png")
-    # @beep = Gosu::Sample.new("#{CURRENT_DIRECTORY}/media/beep.wav")
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/spaceship.png")
+    # @beep = Gosu::Sample.new("#{MEDIA_DIRECTORY}/beep.wav")
     @x, @y = x, y
     @score = 0
     @cooldown_wait = 0
@@ -62,8 +60,7 @@ class Player
     @health = 100
     @armor = 0
     @rockets = 25
-    # @bombs = 0
-    @bombs = 200
+    @bombs = 0
     @time_alive = 0
     @secondary_weapon = "missile"
   end
@@ -77,14 +74,6 @@ class Player
 
   def is_alive
     health > 0
-  end
-
-  def get_height
-    @image.height
-  end
-
-  def get_width
-    @image.width
   end
 
   def move_left
@@ -105,10 +94,14 @@ class Player
 
 
   def attack mouse_x = nil, mouse_y = nil
-    return {
-      projectiles: [Bullet.new(self, 'left'), Bullet.new(self, 'right')],
+    test = {
+      projectiles: [Bullet.new(self, mouse_x, mouse_y, {side: 'left'}), Bullet.new(self, mouse_x, mouse_y, {side: 'right'})],
       cooldown: Bullet::COOLDOWN_DELAY
     }
+
+    puts "NEW BULLET: #{test[:projectiles]}"
+
+    return test
   end
 
   def trigger_secondary_attack mouse_x, mouse_y

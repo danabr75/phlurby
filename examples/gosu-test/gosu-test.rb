@@ -26,25 +26,32 @@
 require 'gosu'
 
 CURRENT_DIRECTORY = File.expand_path('../', __FILE__)
+MEDIA_DIRECTORY   = File.expand_path('../', __FILE__) + "/media"
+# EXCLUDE_CURRENT_FOLDER_LOADING = ['irb_requirements.rb', File.basename(__FILE__)]
 
 
 puts "CURRENT_DIRECTORY: #{CURRENT_DIRECTORY}"
+puts "MEDIA_DIRECTORY: #{MEDIA_DIRECTORY}"
 puts "__FILE__: #{__FILE__}"
+puts File.basename(__FILE__)
 
 # require 'opengl'
 require_relative 'lib/opengl.rb'
 # require 'rmagick'
-require_relative 'star.rb'
-require_relative 'bullet.rb'
-require_relative 'enemy_bullet.rb'
-require_relative 'missile.rb'
-require_relative 'player.rb'
-require_relative 'enemy_player.rb'
-require_relative 'cursor.rb'
-require_relative 'building.rb'
-require_relative 'grappling_hook.rb'
+# require_relative 'star.rb'
+# require_relative 'bullet.rb'
+# require_relative 'enemy_bullet.rb'
+# require_relative 'missile.rb'
+# require_relative 'player.rb'
+# require_relative 'enemy_player.rb'
+# require_relative 'cursor.rb'
+# require_relative 'building.rb'
+# require_relative 'grappling_hook.rb'
 
-
+# Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; require_relative f if !EXCLUDE_CURRENT_FOLDER_LOADING.include?(File.basename(f)) }
+# Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; require_relative f if !EXCLUDE_CURRENT_FOLDER_LOADING.include?(File.basename(f)) }
+# Dir["#{CURRENT_DIRECTORY}/*.rb"].each { |f| puts "LOADING: #{f}"; puts "#{File.basename(f)} != #{File.basename(__FILE__)} is it? #{File.basename(f) != File.basename(__FILE__)} " }
+Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| puts "LOADING: #{f}"; require f }
 
 # require_relative 'media'
 # Dir["/path/to/directory/*.rb"].each {|file| require file }
@@ -55,7 +62,7 @@ require_relative 'grappling_hook.rb'
 WIDTH, HEIGHT = 640, 480
 
 module ZOrder
-  Background, Building, Cursor, Bullets, SmallExplosions, BigExplosions, Pickups, Enemy, Player, UI = *0..10
+  Background, Building, Cursor, Projectiles, SmallExplosions, BigExplosions, Pickups, Enemy, Player, UI = *0..10
 end
 
 # The only really new class here.
@@ -70,7 +77,7 @@ class GLBackground
   SCROLLING_SPEED = 4
 
   def initialize
-    @image = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/earth.png", :tileable => true)
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/earth.png", :tileable => true)
     @scrolls = 0
     @height_map = Array.new(POINTS_Y) { Array.new(POINTS_X) { rand } }
   end
@@ -179,10 +186,10 @@ class OpenGLIntegration < Gosu::Window
     @player = Player.new(400, 500)
     @grappling_hook = nil
     
-    # @star_anim = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/star.png", 25, 25)
-    # @projectile_anim = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/projectile.png", 25, 25)
-    # @projectile_anim = Gosu::Image::load_tiles("#{CURRENT_DIRECTORY}/media/projectile.png", 25, 25)
-    # @projectile_anim = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/projectile-mini.png")
+    # @star_anim = Gosu::Image::load_tiles("#{MEDIA_DIRECTORY}/star.png", 25, 25)
+    # @projectile_anim = Gosu::Image::load_tiles("#{MEDIA_DIRECTORY}/projectile.png", 25, 25)
+    # @projectile_anim = Gosu::Image::load_tiles("#{MEDIA_DIRECTORY}/projectile.png", 25, 25)
+    # @projectile_anim = Gosu::Image.new("#{MEDIA_DIRECTORY}/projectile-mini.png")
     # puts "star_anim size: #{@star_anim.size}"
     # puts "projectile_anim size: #{@projectile_anim.size}"
     # @stars = Array.new
@@ -199,13 +206,13 @@ class OpenGLIntegration < Gosu::Window
     @max_enemies = 4
 
     # @cursor = Gosu::Image.new(self, 'media/crosshair.png')
-    # @pointer = Gosu::Image.new(self,"#{CURRENT_DIRECTORY}/media/crosshair.png")
+    # @pointer = Gosu::Image.new(self,"#{MEDIA_DIRECTORY}/crosshair.png")
 
-    # pointer = Magick::Image::read("#{CURRENT_DIRECTORY}/media/crosshair.png").first.resize(0.3)
+    # pointer = Magick::Image::read("#{MEDIA_DIRECTORY}/crosshair.png").first.resize(0.3)
     # @pointer = Gosu::Image.new(pointer, :tileable => true)
 
     @pointer = Cursor.new
-    # @pointer = Gosu::Image.new("#{CURRENT_DIRECTORY}/media/bullet-mini.png")
+    # @pointer = Gosu::Image.new("#{MEDIA_DIRECTORY}/bullet-mini.png")
     # @px = 0
     # @py = 0
   end
@@ -326,11 +333,12 @@ class OpenGLIntegration < Gosu::Window
 
       @enemy_projectiles.each do |projectile|
         # projectile.hit_stars(@stars)
-        hit_player = projectile.hit_object(@player)
-        if hit_player > 0
-          # puts "hit_player: #{hit_player}"
-          @player.health -= hit_player
-        end
+        projectile.hit_object(@player)
+        # results = 
+        # if hit_player > 0
+        #   # puts "hit_player: #{hit_player}"
+        #   @player.health -= hit_player
+        # end
       end
 
 
@@ -340,13 +348,10 @@ class OpenGLIntegration < Gosu::Window
     if !@game_pause
 
       @projectiles.each do |projectile|
-        # @pickups = @pickups + projectile.hit_objects(@stars)
-        enemy_results = projectile.hit_objects(@enemies)
-        @pickups = @pickups + enemy_results[:drops]
-        @player.score += enemy_results[:point_value]
-        building_results = projectile.hit_objects(@buildings)
-        @pickups = @pickups + building_results[:drops]
-        @player.score += building_results[:point_value]
+        results = projectile.hit_objects([@enemies, @buildings])
+        # puts "RESULTS HERE: #{results}"
+        @pickups = @pickups + results[:drops]
+        @player.score += results[:point_value]
       end
 
 
@@ -369,7 +374,7 @@ class OpenGLIntegration < Gosu::Window
       #   !results[:update]
       # end
 
-      @pickups.reject! { |pickup| !pickup.update }
+      @pickups.reject! { |pickup| !pickup.update(self.mouse_x, self.mouse_y) }
 
       @projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
 
@@ -385,6 +390,7 @@ class OpenGLIntegration < Gosu::Window
       @buildings.push(Building.new()) if rand(100) == 0
 
 
+      # @enemies.push(EnemyPlayer.new()) if @enemies.count == 0
       if @player.is_alive && rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
         (0..@enemies_spawner_counter).each do |count|
           @enemies.push(EnemyPlayer.new())
