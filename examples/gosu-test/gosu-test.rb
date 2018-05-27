@@ -173,12 +173,20 @@ class OpenGLIntegration < Gosu::Window
     window = OpenGLIntegration.new.show
   end
 
+  def self.fullscreen(window)
+    puts "fullscreen"
+    # puts "fullscreen?: #{}"
+    window.fullscreen = !window.fullscreen?
+  end
+
   def initialize
     super WIDTH, HEIGHT
     
     @game_pause = false
     @can_pause = true
     @can_toggle_secondary = true
+    @can_toggle_fullscreen_a = true
+    @can_toggle_fullscreen_b = true
 
     self.caption = "OpenGL Integration"
     
@@ -257,12 +265,46 @@ class OpenGLIntegration < Gosu::Window
         # puts "TAB UP"
         @can_toggle_secondary = true
       end
+
+      if id == Gosu::KB_RETURN
+        @can_toggle_fullscreen_a = true
+      end
+      if id == Gosu::KB_RIGHT_META
+        @can_toggle_fullscreen_b = true
+      end
+      # puts "ID UP: #{id}"
     end
 
 
     if Gosu.button_down?(Gosu::KB_M)
       OpenGLIntegration.reset(self)
     end
+
+
+
+    # if Gosu.button_down?(Gosu::KB_RIGHT_META) && Gosu.button_down?(Gosu::KB_RETURN)
+    #   # puts "HErE"
+    #   # @can_toggle_fullscreen = 0
+    #   # OpenGLIntegration.fullscreen(self)
+    # end
+    # if Gosu.button_down?(Gosu::KB_RIGHT_META)
+    #   # puts "HErE1"
+    #   # @can_toggle_fullscreen = 0
+    #   # OpenGLIntegration.fullscreen(self)
+    # end
+    # if Gosu.button_down?(Gosu::KB_RETURN)
+    #   # puts "HErE2"
+    #   # @can_toggle_fullscreen = 0
+    #   # OpenGLIntegration.fullscreen(self)
+    # end
+
+
+    if Gosu.button_down?(Gosu::KB_RIGHT_META) && Gosu.button_down?(Gosu::KB_RETURN) && @can_toggle_fullscreen_a && @can_toggle_fullscreen_b
+      @can_toggle_fullscreen_a = false
+      @can_toggle_fullscreen_b = false
+      OpenGLIntegration.fullscreen(self)
+    end
+
 
     if Gosu.button_down?(Gosu::KB_P) && @can_pause
       @can_pause = false
