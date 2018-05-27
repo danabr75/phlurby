@@ -50,7 +50,7 @@ class Building < GeneralObject
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Building)
   end
 
-  def update
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     # @y += 3
     if is_alive
       @y += GLBackground::SCROLLING_SPEED
@@ -64,7 +64,7 @@ class Building < GeneralObject
       # end
 
       # return {update: alive, drops: drops}
-      @y < HEIGHT + @image.height
+      @y < height + @image.height
     else
       false
     end

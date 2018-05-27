@@ -17,10 +17,10 @@ class Pickup < GeneralObject
   end
 
 
-  def update mouse_x = nil, mouse_y = nil
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     @y += SCROLLING_SPEED 
 
-    super(mouse_x, mouse_y)
+    super(width, height, mouse_x, mouse_y)
   end
 
   def collected_by_player player

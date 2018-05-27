@@ -14,7 +14,7 @@ class Projectile < GeneralObject
   ADVANCED_HIT_BOX_DETECTION = false
 
 
-  def initialize(object, mouse_x = nil, mouse_y = nil, options = {})
+  def initialize(width, height, object, mouse_x = nil, mouse_y = nil, options = {})
     @image = get_image
     @time_alive = 0
     @mouse_start_x = mouse_x
@@ -31,10 +31,10 @@ class Projectile < GeneralObject
       @y = object.y
     end
 
-    start_point = OpenStruct.new(:x => @x - WIDTH / 2, :y => @y - HEIGHT / 2)
+    start_point = OpenStruct.new(:x => @x - width / 2, :y => @y - height / 2)
     # start_point = GeoPoint.new(@x - WIDTH / 2, @y - HEIGHT / 2)
     # end_point   =   OpenStruct.new(:x => @mouse_start_x, :y => @mouse_start_y)
-    end_point   = OpenStruct.new(:x => @mouse_start_x - WIDTH / 2, :y => @mouse_start_y - HEIGHT / 2)
+    end_point   = OpenStruct.new(:x => @mouse_start_x - width / 2, :y => @mouse_start_y - height / 2)
     # end_point = GeoPoint.new(@mouse_start_x - WIDTH / 2, @mouse_start_y - HEIGHT / 2)
     @angle = calc_angle(start_point, end_point)
     @radian = calc_radian(start_point, end_point)
@@ -51,17 +51,20 @@ class Projectile < GeneralObject
   #   Gosu::Image.new("#{MEDIA_DIRECTORY}/question.png")
   # end
 
-
-  def draw
-    @image.draw(@x, @y, ZOrder::Projectiles, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+  def get_draw_ordering
+    ZOrder::Projectile
   end
 
-  def update mouse_x = nil, mouse_y = nil
-    # Inherit, add logic, then call this to calculate whether it's still visible.
+  # def draw
+  #   @image.draw(@x, @y, ZOrder::Projectile, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+  # end
 
-    @time_alive += 1
-    return is_on_screen?
-  end
+  # def update width, height, mouse_x = nil, mouse_y = nil, player = nil
+  #   # Inherit, add logic, then call this to calculate whether it's still visible.
+
+  #   @time_alive += 1
+  #   return is_on_screen?
+  # end
 
   def get_height
     @image.height

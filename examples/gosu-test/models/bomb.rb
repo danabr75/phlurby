@@ -23,7 +23,7 @@ class Bomb < Projectile
   end
   
 
-  def update mouse_x = nil, mouse_y = nil
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     vx = self.class.get_starting_speed * Math.cos(@angle * Math::PI / 180)
 
     vy =  self.class.get_starting_speed * Math.sin(@angle * Math::PI / 180)
@@ -33,6 +33,6 @@ class Bomb < Projectile
     @x = @x + vx
     @y = @y + vy
 
-    super(mouse_x, mouse_y)
+    super(width, height, mouse_x, mouse_y)
   end
 end

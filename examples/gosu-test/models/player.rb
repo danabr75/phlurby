@@ -79,34 +79,34 @@ class Player < GeneralObject
     health > 0
   end
 
-  def move_left
+  def move_left width
     @x = [@x - Speed, (@image.width/3)].max
   end
   
-  def move_right
-    @x = [@x + Speed, (WIDTH - (@image.width/3))].min
+  def move_right width
+    @x = [@x + Speed, (width - (@image.width/3))].min
   end
   
-  def accelerate
+  def accelerate height
     @y = [@y - Speed, (@image.height/2)].max
   end
   
-  def brake
-    @y = [@y + Speed, HEIGHT].min
+  def brake height
+    @y = [@y + Speed, height].min
   end
 
 
-  def attack mouse_x = nil, mouse_y = nil
+  def attack width, height, mouse_x = nil, mouse_y = nil
     return {
-      projectiles: [Bullet.new(self, mouse_x, mouse_y, {side: 'left'}), Bullet.new(self, mouse_x, mouse_y, {side: 'right'})],
+      projectiles: [Bullet.new(width, height, self, mouse_x, mouse_y, {side: 'left'}), Bullet.new(width, height, self, mouse_x, mouse_y, {side: 'right'})],
       cooldown: Bullet::COOLDOWN_DELAY
     }
   end
 
-  def trigger_secondary_attack mouse_x, mouse_y
+  def trigger_secondary_attack width, height, mouse_x, mouse_y
     return_projectiles = []
     if self.secondary_cooldown_wait <= 0 && self.get_secondary_ammo_count > 0
-      results = self.secondary_attack(mouse_x, mouse_y)
+      results = self.secondary_attack(width, height, mouse_x, mouse_y)
       projectiles = results[:projectiles]
       cooldown = results[:cooldown]
       self.secondary_cooldown_wait = cooldown.to_f.fdiv(self.attack_speed)
@@ -127,22 +127,22 @@ class Player < GeneralObject
   #   return second_weapon
   # end
 
-  def secondary_attack mouse_x = nil, mouse_y = nil
+  def secondary_attack width, height, mouse_x = nil, mouse_y = nil
     second_weapon = case @secondary_weapon
     when 'bomb'
       {
-        projectiles: [Bomb.new(self, mouse_x, mouse_y)],
+        projectiles: [Bomb.new(width, height, self, mouse_x, mouse_y)],
         cooldown: Bomb::COOLDOWN_DELAY
       }
     else
       if get_secondary_ammo_count > 1
         {
-          projectiles: [Missile.new(self, mouse_x, mouse_y, {side: 'left'}), Missile.new(self, mouse_x, mouse_y, {side: 'right'})],
+          projectiles: [Missile.new(width, height, self, mouse_x, mouse_y, {side: 'left'}), Missile.new(width, height, self, mouse_x, mouse_y, {side: 'right'})],
           cooldown: Missile::COOLDOWN_DELAY
         }
       else get_secondary_ammo_count == 1
         {
-          projectiles: [Missile.new(self, mouse_x, mouse_y)],
+          projectiles: [Missile.new(width, height, self, mouse_x, mouse_y)],
           cooldown: Missile::COOLDOWN_DELAY
         }
       end
@@ -150,11 +150,11 @@ class Player < GeneralObject
     return second_weapon
   end
 
-  def draw
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
-  end
+  # def draw
+  #   @image.draw(@x - @image.width / 2, @y - @image.height / 2, Module.const_get("ZOrder::#{self.class.name}"))
+  # end
   
-  def update
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     self.cooldown_wait -= 1 if self.cooldown_wait > 0
     self.secondary_cooldown_wait -= 1 if self.secondary_cooldown_wait > 0
     @time_alive += 1 if self.is_alive

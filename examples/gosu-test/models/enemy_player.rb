@@ -9,12 +9,12 @@ class EnemyPlayer < Player
   POINT_VALUE_BASE = 10
   attr_accessor :cooldown_wait, :attack_speed, :health, :armor, :x, :y
 
-  def initialize(x = nil, y = nil)
+  def initialize(width, height, x = nil, y = nil)
     # image = Magick::Image::read("#{MEDIA_DIRECTORY}/starfighterv4.png").first
     # @image = Gosu::Image.new(image, :tileable => true)
     @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/starfighterv4.png")
     # @beep = Gosu::Sample.new("#{MEDIA_DIRECTORY}/beep.wav")
-    @x = x || rand(WIDTH)
+    @x = x || rand(width)
     @y = y || 0
     @cooldown_wait = 0
     @attack_speed = 0.5
@@ -35,9 +35,9 @@ class EnemyPlayer < Player
     @health -= damage
   end
 
-  def attack
+  def attack width, height
     return {
-      projectiles: [EnemyBullet.new(self)],
+      projectiles: [EnemyBullet.new(width, height, self)],
       cooldown: EnemyBullet::COOLDOWN_DELAY
     }
   end
@@ -50,11 +50,15 @@ class EnemyPlayer < Player
     ]
   end
 
-  def draw
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Enemy)
+  def get_draw_ordering
+    ZOrder::Enemy
   end
 
-  def update player
+  # def draw
+  #   @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Enemy)
+  # end
+
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     # @y += 3
     if is_alive
       # Stay above the player
@@ -64,7 +68,7 @@ class EnemyPlayer < Player
         if rand(2).even?
           @y += rand(5)
 
-          @y = HEIGHT / 2 if @y > HEIGHT / 2
+          @y = height / 2 if @y > height / 2
         else
           @y -= rand(5)
 
@@ -73,14 +77,14 @@ class EnemyPlayer < Player
       end
       if rand(2).even?
         @x += rand(5)
-        @x = WIDTH if @x > WIDTH
+        @x = width if @x > width
       else
         @x -= rand(5)
         @x = 0 + (@image.width / 2) if @x < 0 + (@image.width / 2)
       end
 
 
-      @y < HEIGHT + (@image.height / 2)
+      @y < height + (@image.height / 2)
     else
       false
     end

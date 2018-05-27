@@ -63,7 +63,7 @@ WIDTH, HEIGHT = 640, 480
 # WIDTH, HEIGHT = 1080, 720
 
 module ZOrder
-  Background, Building, Cursor, Projectiles, SmallExplosions, BigExplosions, Pickups, Enemy, Player, UI = *0..10
+  Background, Building, Cursor, Projectile, SmallExplosions, BigExplosions, Pickups, Enemy, Player, UI = *0..10
 end
 
 # The only really new class here.
@@ -179,11 +179,19 @@ class OpenGLIntegration < Gosu::Window
     window.fullscreen = !window.fullscreen?
   end
 
-  def initialize
-    super WIDTH, HEIGHT
+  def self.resize(window, width, height, fullscreen)
+    window = OpenGLIntegration.new(width, height).show
+    window.fullscreen = fullscreen
+  end
+
+  def initialize width = nil, height = nil
+    @width  = width || WIDTH
+    @height = height || HEIGHT
+    super(@width, @height)
     
     @game_pause = false
     @can_pause = true
+    @can_resize = true
     @can_toggle_secondary = true
     @can_toggle_fullscreen_a = true
     @can_toggle_fullscreen_b = true
@@ -312,6 +320,14 @@ class OpenGLIntegration < Gosu::Window
       @game_pause = !@game_pause
     end
 
+    if Gosu.button_down?(Gosu::KB_O) && @can_resize
+      @can_resize = false
+      # puts "GAME PAUSE: #{@game_pause}"
+      OpenGLIntegration.resize(self, 1920, 1080, false)
+    end
+
+
+
     if Gosu.button_down?(Gosu::KB_TAB) && @can_toggle_secondary
       # puts "TAB HERE"
       @can_toggle_secondary = false
@@ -319,11 +335,11 @@ class OpenGLIntegration < Gosu::Window
     end
 
     if @player.is_alive && !@game_pause
-      @player.update
-      @player.move_left  if Gosu.button_down?(Gosu::KB_LEFT)  || Gosu.button_down?(Gosu::GP_LEFT)    || Gosu.button_down?(Gosu::KB_A)
-      @player.move_right if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::GP_RIGHT)   || Gosu.button_down?(Gosu::KB_D)
-      @player.accelerate if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
-      @player.brake      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
+      @player.update(@width, @height)
+      @player.move_left(@width)  if Gosu.button_down?(Gosu::KB_LEFT)  || Gosu.button_down?(Gosu::GP_LEFT)    || Gosu.button_down?(Gosu::KB_A)
+      @player.move_right(@width) if Gosu.button_down?(Gosu::KB_RIGHT) || Gosu.button_down?(Gosu::GP_RIGHT)   || Gosu.button_down?(Gosu::KB_D)
+      @player.accelerate(@height) if Gosu.button_down?(Gosu::KB_UP)    || Gosu.button_down?(Gosu::GP_UP)      || Gosu.button_down?(Gosu::KB_W)
+      @player.brake(@height)      if Gosu.button_down?(Gosu::KB_DOWN)  || Gosu.button_down?(Gosu::GP_DOWN)    || Gosu.button_down?(Gosu::KB_S)
 
       if Gosu.button_down?(Gosu::MS_RIGHT)
         if @grappling_hook == nil
@@ -351,12 +367,12 @@ class OpenGLIntegration < Gosu::Window
 
       if Gosu.button_down?(Gosu::MS_LEFT)
         # puts "MOUSE CLICK"
-        @projectiles = @projectiles + @player.trigger_secondary_attack(self.mouse_x, self.mouse_y)
+        @projectiles = @projectiles + @player.trigger_secondary_attack(@width, @height, self.mouse_x, self.mouse_y)
       end
 
       if Gosu.button_down?(Gosu::KB_SPACE)
         if @player.cooldown_wait <= 0
-          results = @player.attack(self.mouse_x, self.mouse_y)
+          results = @player.attack(@width, @height, self.mouse_x, self.mouse_y)
           projectiles = results[:projectiles]
           cooldown = results[:cooldown]
           @player.cooldown_wait = cooldown.to_f.fdiv(@player.attack_speed)
@@ -398,10 +414,10 @@ class OpenGLIntegration < Gosu::Window
       
       
       # @stars.reject! { |star| !star.update }
-      @buildings.reject! { |building| !building.update }
+      @buildings.reject! { |building| !building.update(@width, @height) }
 
       if @player.is_alive && @grappling_hook
-        grap_result = @grappling_hook.update(self.mouse_x, self.mouse_y, @player)
+        grap_result = @grappling_hook.update(@width, @height, self.mouse_x, self.mouse_y, @player)
         # puts "Setting grap to nil - #{grap_result}" if !grap_result
         @grappling_hook = nil if !grap_result
       end
@@ -414,12 +430,12 @@ class OpenGLIntegration < Gosu::Window
       #   !results[:update]
       # end
 
-      @pickups.reject! { |pickup| !pickup.update(self.mouse_x, self.mouse_y) }
+      @pickups.reject! { |pickup| !pickup.update(@width, @height, self.mouse_x, self.mouse_y) }
 
-      @projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
+      @projectiles.reject! { |projectile| !projectile.update(@width, @height, self.mouse_x, self.mouse_y) }
 
-      @enemy_projectiles.reject! { |projectile| !projectile.update(self.mouse_x, self.mouse_y) }
-      @enemies.reject! { |enemy| !enemy.update(@player) }
+      @enemy_projectiles.reject! { |projectile| !projectile.update(@width, @height, self.mouse_x, self.mouse_y) }
+      @enemies.reject! { |enemy| !enemy.update(@width, @height, nil, nil, @player) }
 
 
       @gl_background.scroll
@@ -433,7 +449,7 @@ class OpenGLIntegration < Gosu::Window
       # @enemies.push(EnemyPlayer.new()) if @enemies.count == 0
       if @player.is_alive && rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
         (0..@enemies_spawner_counter).each do |count|
-          @enemies.push(EnemyPlayer.new())
+          @enemies.push(EnemyPlayer.new(@width, @height))
         end
       end
       if @player.time_alive % 500 == 0
@@ -455,7 +471,7 @@ class OpenGLIntegration < Gosu::Window
       @enemies.each do |enemy|
         enemy.cooldown_wait -= 1 if enemy.cooldown_wait > 0
         if enemy.cooldown_wait <= 0
-          results = enemy.attack
+          results = enemy.attack(@width, @height)
           projectiles = results[:projectiles]
           cooldown = results[:cooldown]
           enemy.cooldown_wait = cooldown.to_f.fdiv(enemy.attack_speed)
@@ -477,10 +493,10 @@ class OpenGLIntegration < Gosu::Window
 
     @player.draw if @player.is_alive
     @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
-    @font.draw("You are dead!", WIDTH / 2 - 50, HEIGHT / 2 - 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
-    @font.draw("Press ESC to quit", WIDTH / 2 - 50, HEIGHT / 2 - 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
-    @font.draw("Press M to Restart", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
-    @font.draw("Paused", WIDTH / 2 - 50, HEIGHT / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
+    @font.draw("You are dead!", @width / 2 - 50, @height / 2 - 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("Press ESC to quit", @width / 2 - 50, @height / 2 - 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("Press M to Restart", @width / 2 - 50, @height / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
+    @font.draw("Paused", @width / 2 - 50, @height / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
     @enemies.each { |enemy| enemy.draw }
     @projectiles.each { |projectile| projectile.draw() }
     @enemy_projectiles.each { |projectile| projectile.draw() }

@@ -39,7 +39,7 @@ class Missile < Projectile
   #   @mouse_start_y = mouse_y
   # end
   
-  def update mouse_x = nil, mouse_y = nil
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     new_speed = 0
     if @time_alive > self.class.get_initial_delay
       new_speed = self.class.get_starting_speed + (self.class.get_speed_increase_factor > 0 ? @time_alive * self.class.get_speed_increase_factor : 0)
@@ -57,33 +57,9 @@ class Missile < Projectile
       vy = vy - ((new_speed / 3) * 2)
     end
 
-    # puts "MISSILE NEW X: #{@x + vx}"
     @x = @x + vx
     @y = @y + vy
 
-    # mouse_x = @mouse_start_x
-    # mouse_y = @mouse_start_y
-
-    # # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
-    # if @x > mouse_x
-    #   difference = @x - mouse_x
-    #   if difference > self.class.get_max_cursor_follow
-    #     difference = self.class.get_max_cursor_follow
-    #   end
-    #   @x = @x - difference
-    # else
-    #   # Cursor is right of the missle, missile needs to go right. @x needs to get bigger. @x is smaller than mouse_x
-    #   difference = mouse_x - @x
-    #   if difference > self.class.get_max_cursor_follow
-    #     difference = self.class.get_max_cursor_follow
-    #   end
-    #   @x = @x + difference
-    # end
-
-    # Return false when out of screen (gets deleted then)
-    # @time_alive += 1
-
-    # @y > 0 && @y < HEIGHT && @x > 0 && @x < WIDTH
-    super(mouse_x, mouse_y)
+    super(width, height, mouse_x, mouse_y)
   end
 end

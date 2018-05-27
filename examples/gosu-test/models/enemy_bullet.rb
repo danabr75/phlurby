@@ -9,7 +9,7 @@ class EnemyBullet < Projectile
     Gosu::Image.new("#{MEDIA_DIRECTORY}/bullet-mini-reverse.png")
   end
 
-  def initialize(object, mouse_x = nil, mouse_y = nil, options = {})
+  def initialize(width, height, object, mouse_x = nil, mouse_y = nil, options = {})
     @time_alive = 0
     @image = get_image
     # @color = Gosu::Color.new(0xff_000000)
@@ -28,7 +28,7 @@ class EnemyBullet < Projectile
     end
   end
 
-  def update mouse_x = nil, mouse_y = nil
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     @y += self.class.get_max_speed
     # Return false when out of screen (gets deleted then)
     @y > 0

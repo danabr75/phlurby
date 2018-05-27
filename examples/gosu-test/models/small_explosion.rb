@@ -25,12 +25,12 @@ class SmallExplosion < GeneralObject
   end
 
 
-  def update mouse_x = nil, mouse_y = nil
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     # Remove even if hasn't gone offscreen
     if @time_alive <= TIME_TO_LIVE
       @time_alive += 1
       @y += SCROLLING_SPEED - 1
-      super(mouse_x, mouse_y)
+      super(width, height, mouse_x, mouse_y)
     else
       false
     end

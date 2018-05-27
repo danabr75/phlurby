@@ -97,7 +97,7 @@ class GrapplingHook < GeneralObject
     @active = true
   end
   
-  def update mouse_x = nil, mouse_y = nil, object
+  def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     # if @time_alive > INITIAL_DELAY
     #   new_speed = STARTING_SPEED + (@time_alive * SPEED_INCREASE_FACTOR)
     #   new_speed = MAX_SPEED if new_speed > MAX_SPEED
@@ -105,12 +105,10 @@ class GrapplingHook < GeneralObject
     # end
     return_value = true
     if !self.active
-      # puts "IS NOT ACTIVE"
-      mouse_x = object.get_x
-      mouse_y = object.get_y
+      mouse_x = player.x
+      mouse_y = player.y
 
-      if Gosu.distance(@x, @y, object.x, object.y) < 35
-        # puts "DELETE GRAPPHLE HOOK"
+      if Gosu.distance(@x, @y, player.x, player.y) < 35
         return_value = false
       end
 
