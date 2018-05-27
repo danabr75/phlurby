@@ -22,10 +22,15 @@ class GeneralObject
   end
 
 
-  def draw
+  def draw scale = 1
     # Will generate error if class name is not listed on ZOrder
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering || Module.const_get("ZOrder::#{self.class.name}"))
+    @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering || Module.const_get("ZOrder::#{self.class.name}"), scale, scale)
     # @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering)
+  end
+
+  def draw_rot scale = 1
+    # draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
+    @image.draw_rot(@x, @y, get_draw_ordering || Module.const_get("ZOrder::#{self.class.name}"), @y, 0.5, 0.5, scale, scale)
   end
 
   def get_height

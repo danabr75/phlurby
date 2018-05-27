@@ -33,14 +33,14 @@ class GrapplingHook < GeneralObject
     @acquired_items = 0
   end
 
-  def draw(player)
+  def draw scale, player
     # puts Gosu.milliseconds
     # puts @animation.size
     # puts 100 % @animation.size
     # puts "Gosu.milliseconds / 100 % @animation.size: #{Gosu.milliseconds / 100 % @animation.size}"
-    # img.draw(@x, @y, ZOrder::Projectiles, :add)
+    # img.draw(@x, @y, ZOrder::Projectile, :add)
     # puts "11: #{@x} and #{@y}"
-    # @image.draw(@x, @y, ZOrder::Projectiles)
+    # @image.draw(@x, @y, ZOrder::Projectile)
     @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Cursor)
 
     chain_x = @x
@@ -78,7 +78,7 @@ class GrapplingHook < GeneralObject
         chain_y = chain_y + difference
       end
 
-      @chain.draw(chain_x - @chain.width / 2, chain_y - @chain.height / 2, ZOrder::Cursor)
+      @chain.draw(chain_x - @chain.width / 2, chain_y - @chain.height / 2, ZOrder::Cursor, scale, scale)
       counter += 1
     end
 

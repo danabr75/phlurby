@@ -1,6 +1,6 @@
-require_relative 'general_object.rb'
+require_relative 'pickup.rb'
 
-class HealthPack < GeneralObject
+class HealthPack < Pickup
   attr_reader :x, :y
 
   HEALTH_BOOST = 25
@@ -11,14 +11,15 @@ class HealthPack < GeneralObject
     @y = y
   end
 
-  def draw
+  def draw scale = 1
     image_rot = (Gosu.milliseconds / 50 % 26)
     if image_rot >= 13
       image_rot = 26 - image_rot
     end 
     image_rot = 12 if image_rot == 13
     @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/health_pack_#{image_rot}.png", :tileable => true)
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Pickups)
+    # @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Pickup)
+    super(scale)
   end
 
 

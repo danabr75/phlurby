@@ -13,7 +13,7 @@ class SmallExplosion < GeneralObject
     @time_alive = 0
   end
 
-  def draw
+  def draw scale = 1
     spin_down = 0
     if @time_alive > 0
       spin_down = (@time_alive * @time_alive) / 5
@@ -21,7 +21,7 @@ class SmallExplosion < GeneralObject
     if spin_down > (@time_alive * 10)
       spin_down = @time_alive * 10
     end
-    @image.draw_rot(@x, @y, ZOrder::SmallExplosions, (360 - spin_down), 0.5, 0.5, 1, 1)
+    @image.draw_rot(@x, @y, ZOrder::SmallExplosions, (360 - spin_down), 0.5, 0.5, scale, scale)
   end
 
 

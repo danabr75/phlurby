@@ -16,10 +16,12 @@ class Bomb < Projectile
     Gosu::Image.new("#{MEDIA_DIRECTORY}/bomb.png")
   end
 
-  def draw
-    # @image.draw(@x, @y, ZOrder::Projectiles, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
-    # @image.draw(@x, @y, ZOrder::Projectiles, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
-    @image.draw_rot(@x, @y, ZOrder::Projectiles, @y, 0.5, 0.5, 1, 1)
+  def draw scale = 1
+    # @image.draw(@x, @y, ZOrder::Projectile, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    # @image.draw(@x, @y, ZOrder::Projectile, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
+    # draw_rot(x, y, z, angle, center_x = 0.5, center_y = 0.5, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default) ⇒ void
+    # @image.draw_rot(@x, @y, ZOrder::Projectile, @y, 0.5, 0.5, scale, scale)
+    return draw_rot(scale)
   end
   
 

@@ -15,10 +15,10 @@ class Cursor < GeneralObject
   end
 
 
-  def draw mouse_x, mouse_y
+  def draw scale, mouse_x, mouse_y
     # @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
     # @image.draw(mouse_x, mouse_y, ZOrder::Cursor)
-    @image.draw(mouse_x - @image.width / 2, mouse_y - @image.height / 2, ZOrder::Cursor)
+    @image.draw(mouse_x - @image.width / 2, mouse_y - @image.height / 2, ZOrder::Cursor, scale, scale)
   end
 
 end

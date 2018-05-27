@@ -46,9 +46,9 @@ class Building < GeneralObject
     end
   end
 
-  def draw
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Building)
-  end
+  # def draw
+  #   @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Building)
+  # end
 
   def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     # @y += 3

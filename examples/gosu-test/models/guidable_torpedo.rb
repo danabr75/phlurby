@@ -28,9 +28,9 @@
 #     # puts @animation.size
 #     # puts 100 % @animation.size
 #     # puts "Gosu.milliseconds / 100 % @animation.size: #{Gosu.milliseconds / 100 % @animation.size}"
-#     # img.draw(@x, @y, ZOrder::Projectiles, :add)
+#     # img.draw(@x, @y, ZOrder::Projectile, :add)
 #     puts "11: #{@x} and #{@y}"
-#     @image.draw(@x, @y, ZOrder::Projectiles)
+#     @image.draw(@x, @y, ZOrder::Projectile)
 #     # img.draw_rect(@x, @y, 25, 25, @x + 25, @y + 25, :add)
 #   end
   

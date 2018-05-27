@@ -5,8 +5,9 @@ class MissilePack < Pickup
     Gosu::Image.new("#{MEDIA_DIRECTORY}/missile_pack.png", :tileable => true)
   end
 
-  def draw
-    @image.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, 1, 1)
+  def draw scale = 1
+    # @image.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, 1, 1)
+    draw_rot(scale)
   end
 
   def collected_by_player player

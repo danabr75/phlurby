@@ -8,6 +8,12 @@ class Player < GeneralObject
 
   SECONDARY_WEAPONS = %w[missile bomb]
 
+  # def draw
+  #   # Will generate error if class name is not listed on ZOrder
+  #   @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering || Module.const_get("ZOrder::#{self.class.name}"))
+  #   # @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering)
+  # end
+
   def take_damage damage
     @health -= damage
   end

@@ -37,9 +37,9 @@ class Star < Pickup
   end  
 
 
-  def draw 
+  def draw scale = 1
     img = @image[Gosu.milliseconds / 100 % @image.size];
-    img.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, 1, 1, @color, :add)
+    img.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, scale, scale, @color, :add)
   end
   
   # def update mouse_x = nil, mouse_y = nil

@@ -11,10 +11,14 @@ class Pickup < GeneralObject
     @time_alive = 0
   end
 
-  def draw
-    # @image.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, 1, 1)
-    raise "override me!"
+  def get_draw_ordering
+    ZOrder::Projectile
   end
+
+  # def draw
+  #   # @image.draw_rot(@x, @y, ZOrder::Pickups, @y, 0.5, 0.5, 1, 1)
+  #   raise "override me!"
+  # end
 
 
   def update width, height, mouse_x = nil, mouse_y = nil, player = nil

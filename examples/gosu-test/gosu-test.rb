@@ -185,6 +185,7 @@ class OpenGLIntegration < Gosu::Window
   end
 
   def initialize width = nil, height = nil
+    @scale = 1
     @width  = width || WIDTH
     @height = height || HEIGHT
     super(@width, @height)
@@ -200,7 +201,7 @@ class OpenGLIntegration < Gosu::Window
     
     @gl_background = GLBackground.new
     
-    @player = Player.new(400, 500)
+    @player = Player.new(@width / 2, @height / 2)
     @grappling_hook = nil
     
     # @star_anim = Gosu::Image::load_tiles("#{MEDIA_DIRECTORY}/star.png", 25, 25)
@@ -489,20 +490,20 @@ class OpenGLIntegration < Gosu::Window
   # end
 
   def draw
-    @pointer.draw(self.mouse_x, self.mouse_y) if @grappling_hook.nil? || !@grappling_hook.active
+    @pointer.draw(@scale, self.mouse_x, self.mouse_y) if @grappling_hook.nil? || !@grappling_hook.active
 
-    @player.draw if @player.is_alive
-    @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
+    @player.draw(@scale) if @player.is_alive
+    @grappling_hook.draw(@scale, @player) if @player.is_alive && @grappling_hook
     @font.draw("You are dead!", @width / 2 - 50, @height / 2 - 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Press ESC to quit", @width / 2 - 50, @height / 2 - 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Press M to Restart", @width / 2 - 50, @height / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Paused", @width / 2 - 50, @height / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
-    @enemies.each { |enemy| enemy.draw }
-    @projectiles.each { |projectile| projectile.draw() }
-    @enemy_projectiles.each { |projectile| projectile.draw() }
+    @enemies.each { |enemy| enemy.draw(@scale) }
+    @projectiles.each { |projectile| projectile.draw(@scale) }
+    @enemy_projectiles.each { |projectile| projectile.draw(@scale) }
     # @stars.each { |star| star.draw }
-    @pickups.each { |pickup| pickup.draw }
-    @buildings.each { |building| building.draw }
+    @pickups.each { |pickup| pickup.draw(@scale) }
+    @buildings.each { |building| building.draw(@scale) }
     @font.draw("Score: #{@player.score}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     # @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Health: #{@player.health}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
