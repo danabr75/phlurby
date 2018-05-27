@@ -60,6 +60,9 @@ Dir["#{CURRENT_DIRECTORY}/models/*.rb"].each { |f| require f }
 
 
 WIDTH, HEIGHT = 640, 480
+
+RESOLUTIONS = [[640, 480], [800, 600], [960, 720], [1024, 768], [1280, 960], [1400, 1050], [1440, 1080], [1600, 1200], [1856, 1392], [1920, 1440], [2048, 1536]]
+# RESOLUTIONS = [[640, 480], [800, 600], [960, 720], [1024, 768]]
 # WIDTH, HEIGHT = 1080, 720
 
 module ZOrder
@@ -163,6 +166,7 @@ end
 
 
 class OpenGLIntegration < Gosu::Window
+  attr_accessor :width, :height
 
   # def button_down(id)
   #   puts "HERE: #{id.inspect}"
@@ -173,9 +177,13 @@ class OpenGLIntegration < Gosu::Window
     window = OpenGLIntegration.new.show
   end
 
+# When fullscreen, try to match window with screen resolution
+# .screen_height ⇒ Integer
+# The height (in pixels) of the user's primary screen.
+# .screen_width ⇒ Integer
+# The width (in pixels) of the user's primary screen.
+
   def self.fullscreen(window)
-    puts "fullscreen"
-    # puts "fullscreen?: #{}"
     window.fullscreen = !window.fullscreen?
   end
 
@@ -184,15 +192,63 @@ class OpenGLIntegration < Gosu::Window
     window.fullscreen = fullscreen
   end
 
-  def initialize width = nil, height = nil
-    @scale = 1
+  def self.find_index_of_current_resolution width, height
+    current_index = nil
+    counter = 0
+    RESOLUTIONS.each do |resolution|
+      break if current_index && current_index > 0
+      current_index = counter if resolution[0] == width && resolution[1] == height
+      counter += 1
+    end
+    return current_index
+  end
+
+  def self.up_resolution(window)
+    # puts "UP RESLUTION"
+    index = find_index_of_current_resolution(window.width, window.height)
+    # puts "FOUND INDEX: #{index}"
+    if index == RESOLUTIONS.count - 1
+      # Max resolution, do nothing
+    else
+      # window.width = RESOLUTIONS[index + 1][0]
+      # window.height = RESOLUTIONS[index + 1][1]
+      width = RESOLUTIONS[index + 1][0]
+      height = RESOLUTIONS[index + 1][1]
+      # puts "UPPING TO #{width} x #{height}"
+      window = OpenGLIntegration.new(width, height, {block_resize: true}).show
+    end
+  end
+
+  def self.down_resolution(window)
+    index = find_index_of_current_resolution(window.width, window.height)
+    if index == 0
+      # Min resolution, do nothing
+    else
+      # window.width = RESOLUTIONS[index - 1][0]
+      # window.height = RESOLUTIONS[index - 1][1]
+      width = RESOLUTIONS[index - 1][0]
+      height = RESOLUTIONS[index - 1][1]
+      window = OpenGLIntegration.new(width, height, {block_resize: true}).show
+    end
+  end
+
+  def initialize width = nil, height = nil, options = {}
     @width  = width || WIDTH
     @height = height || HEIGHT
+    index = OpenGLIntegration.find_index_of_current_resolution(self.width, self.height)
+    if index == 0
+      @scale = 1
+    else
+      original_width, original_height = RESOLUTIONS[0]
+      width_scale = @width / original_width.to_f
+      height_scale = @height / original_height.to_f
+      @scale = (width_scale + height_scale) / 2
+    end
     super(@width, @height)
     
     @game_pause = false
     @can_pause = true
-    @can_resize = true
+    @can_resize = !options[:block_resize].nil? && options[:block_resize] == true ? false : true
     @can_toggle_secondary = true
     @can_toggle_fullscreen_a = true
     @can_toggle_fullscreen_b = true
@@ -201,7 +257,7 @@ class OpenGLIntegration < Gosu::Window
     
     @gl_background = GLBackground.new
     
-    @player = Player.new(@width / 2, @height / 2)
+    @player = Player.new(@scale, @width / 2, @height / 2)
     @grappling_hook = nil
     
     # @star_anim = Gosu::Image::load_tiles("#{MEDIA_DIRECTORY}/star.png", 25, 25)
@@ -229,7 +285,7 @@ class OpenGLIntegration < Gosu::Window
     # pointer = Magick::Image::read("#{MEDIA_DIRECTORY}/crosshair.png").first.resize(0.3)
     # @pointer = Gosu::Image.new(pointer, :tileable => true)
 
-    @pointer = Cursor.new
+    @pointer = Cursor.new(@scale)
     # @pointer = Gosu::Image.new("#{MEDIA_DIRECTORY}/bullet-mini.png")
     # @px = 0
     # @py = 0
@@ -260,6 +316,7 @@ class OpenGLIntegration < Gosu::Window
 
     # Gosu::Window#button_up
     def button_up id
+      # puts "BUTTON_UP: #{id}"
       # super
       if (id == Gosu::MS_RIGHT) && @player.is_alive
         # puts "MOUSE CLICK"
@@ -282,6 +339,12 @@ class OpenGLIntegration < Gosu::Window
         @can_toggle_fullscreen_b = true
       end
       # puts "ID UP: #{id}"
+      if id == Gosu::KB_MINUS
+        @can_resize = true
+      end
+      if id == Gosu::KB_EQUALS
+        @can_resize = true
+      end
     end
 
 
@@ -327,6 +390,17 @@ class OpenGLIntegration < Gosu::Window
       OpenGLIntegration.resize(self, 1920, 1080, false)
     end
 
+    if Gosu.button_down?(Gosu::KB_MINUS) && @can_resize
+      @can_resize = false
+      # puts "GAME PAUSE: #{@game_pause}"
+      OpenGLIntegration.down_resolution(self)
+    end
+    if Gosu.button_down?(Gosu::KB_EQUALS) && @can_resize
+      # puts "INCREASE SIZE! - #{@can_resize}"
+      @can_resize = false
+      # puts "GAME PAUSE: #{@game_pause}"
+      OpenGLIntegration.up_resolution(self)
+    end
 
 
     if Gosu.button_down?(Gosu::KB_TAB) && @can_toggle_secondary
@@ -344,7 +418,7 @@ class OpenGLIntegration < Gosu::Window
 
       if Gosu.button_down?(Gosu::MS_RIGHT)
         if @grappling_hook == nil
-          @grappling_hook = GrapplingHook.new(@player)
+          @grappling_hook = GrapplingHook.new(@scale, @player)
         end
       end
 
@@ -444,13 +518,13 @@ class OpenGLIntegration < Gosu::Window
       # @stars.push(Star.new()) if rand(75) == 0
 
       # @buildings.push(Building.new()) if rand(500) == 0
-      @buildings.push(Building.new()) if rand(100) == 0
+      @buildings.push(Building.new(@scale)) if rand(100) == 0
 
 
       # @enemies.push(EnemyPlayer.new()) if @enemies.count == 0
       if @player.is_alive && rand(@enemies_random_spawn_timer) == 0 && @enemies.count <= @max_enemies
         (0..@enemies_spawner_counter).each do |count|
-          @enemies.push(EnemyPlayer.new(@width, @height))
+          @enemies.push(EnemyPlayer.new(@scale, @width, @height))
         end
       end
       if @player.time_alive % 500 == 0
@@ -490,20 +564,20 @@ class OpenGLIntegration < Gosu::Window
   # end
 
   def draw
-    @pointer.draw(@scale, self.mouse_x, self.mouse_y) if @grappling_hook.nil? || !@grappling_hook.active
+    @pointer.draw(self.mouse_x, self.mouse_y) if @grappling_hook.nil? || !@grappling_hook.active
 
-    @player.draw(@scale) if @player.is_alive
-    @grappling_hook.draw(@scale, @player) if @player.is_alive && @grappling_hook
+    @player.draw() if @player.is_alive
+    @grappling_hook.draw(@player) if @player.is_alive && @grappling_hook
     @font.draw("You are dead!", @width / 2 - 50, @height / 2 - 55, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Press ESC to quit", @width / 2 - 50, @height / 2 - 40, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Press M to Restart", @width / 2 - 50, @height / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if !@player.is_alive
     @font.draw("Paused", @width / 2 - 50, @height / 2 - 25, ZOrder::UI, 1.0, 1.0, 0xff_ffff00) if @game_pause
-    @enemies.each { |enemy| enemy.draw(@scale) }
-    @projectiles.each { |projectile| projectile.draw(@scale) }
-    @enemy_projectiles.each { |projectile| projectile.draw(@scale) }
+    @enemies.each { |enemy| enemy.draw() }
+    @projectiles.each { |projectile| projectile.draw() }
+    @enemy_projectiles.each { |projectile| projectile.draw() }
     # @stars.each { |star| star.draw }
-    @pickups.each { |pickup| pickup.draw(@scale) }
-    @buildings.each { |building| building.draw(@scale) }
+    @pickups.each { |pickup| pickup.draw() }
+    @buildings.each { |building| building.draw() }
     @font.draw("Score: #{@player.score}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     # @font.draw("Attack Speed: #{@player.attack_speed.round(2)}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)
     @font.draw("Health: #{@player.health}", 10, get_font_ui_y, ZOrder::UI, 1.0, 1.0, 0xff_ffff00)

@@ -13,7 +13,8 @@ class GrapplingHook < GeneralObject
   
   MAX_CURSOR_FOLLOW = 15
 
-  def initialize(object)
+  def initialize(scale, object)
+    @scale = scale
 
     # image = Magick::Image::read("#{MEDIA_DIRECTORY}/grappling_hook.png").first.resize(0.1)
     # @image = Gosu::Image.new(image, :tileable => true)
@@ -33,7 +34,7 @@ class GrapplingHook < GeneralObject
     @acquired_items = 0
   end
 
-  def draw scale, player
+  def draw player
     # puts Gosu.milliseconds
     # puts @animation.size
     # puts 100 % @animation.size
@@ -41,13 +42,13 @@ class GrapplingHook < GeneralObject
     # img.draw(@x, @y, ZOrder::Projectile, :add)
     # puts "11: #{@x} and #{@y}"
     # @image.draw(@x, @y, ZOrder::Projectile)
-    @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Cursor)
+    @image.draw(@x - get_width / 2, @y - get_height / 2, ZOrder::Cursor, @scale, @scale)
 
     chain_x = @x
     chain_y = @y
     max_chain_length = 100
     counter = 0
-    while Gosu.distance(chain_x, chain_y, player.x, player.y) > 35 && counter < max_chain_length
+    while Gosu.distance(chain_x, chain_y, player.x, player.y) > (35 * @scale) && counter < max_chain_length
       if chain_x > player.x
         difference = chain_x - player.x
         if difference > MAX_CURSOR_FOLLOW
@@ -78,7 +79,7 @@ class GrapplingHook < GeneralObject
         chain_y = chain_y + difference
       end
 
-      @chain.draw(chain_x - @chain.width / 2, chain_y - @chain.height / 2, ZOrder::Cursor, scale, scale)
+      @chain.draw(chain_x - @chain.width / 2, chain_y - @chain.height / 2, ZOrder::Cursor, @scale, @scale)
       counter += 1
     end
 
@@ -96,6 +97,10 @@ class GrapplingHook < GeneralObject
   def activate
     @active = true
   end
+
+  def get_max_cursor
+    (MAX_CURSOR_FOLLOW * @scale).round
+  end
   
   def update width, height, mouse_x = nil, mouse_y = nil, player = nil
     # if @time_alive > INITIAL_DELAY
@@ -108,7 +113,7 @@ class GrapplingHook < GeneralObject
       mouse_x = player.x
       mouse_y = player.y
 
-      if Gosu.distance(@x, @y, player.x, player.y) < 35
+      if Gosu.distance(@x, @y, player.x, player.y) < 35 * @scale
         return_value = false
       end
 
@@ -117,33 +122,40 @@ class GrapplingHook < GeneralObject
     # Cursor is left of the missle, missile needs to go left. @x needs to get smaller. @x is greater than mouse_x
     if @x > mouse_x
       difference = @x - mouse_x
-      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
-        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+      if difference > get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @x = @x - difference
     else
       # Cursor is right of the missle, missile needs to go right. @x needs to get bigger. @x is smaller than mouse_x
       difference = mouse_x - @x
-      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
-        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+      if difference > get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @x = @x + difference
     end
 
     if @y > mouse_y
       difference = @y - mouse_y
-      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
-        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+      if difference > get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @y = @y - difference
     else
       # Cursor is right of the missle, missile needs to go right. @y needs to get bigger. @y is smaller than mouse_y
       difference = mouse_y - @y
-      if difference > MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
-        difference = MAX_CURSOR_FOLLOW / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+      if difference > get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
+        difference = get_max_cursor / (@acquired_items > 0 ? (@acquired_items + 2) : 1)
       end
       @y = @y + difference
     end
+
+    # MOUSE X and MOUSE Y: 400 and 300
+    # NEW Y AND X FOR GRAPPLE: 391 and 281
+    # MOUSE X and MOUSE Y: 400 and 300
+    # NEW Y AND X FOR GRAPPLE: 410 and 300
+
+
 
     # puts "GRAPPLING HOOK REUTRN: #{return_value}"
     return return_value

@@ -1,7 +1,7 @@
 require_relative 'general_object.rb'
 
 class Player < GeneralObject
-  Speed = 7
+  SPEED = 7
   MAX_ATTACK_SPEED = 3.0
   attr_accessor :cooldown_wait, :secondary_cooldown_wait, :attack_speed, :health, :armor, :x, :y, :rockets, :score, :time_alive, :bombs, :secondary_weapon
   MAX_HEALTH = 200
@@ -10,9 +10,29 @@ class Player < GeneralObject
 
   # def draw
   #   # Will generate error if class name is not listed on ZOrder
-  #   @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering || Module.const_get("ZOrder::#{self.class.name}"))
-  #   # @image.draw(@x - @image.width / 2, @y - @image.height / 2, get_draw_ordering)
+  #   @image.draw(@x - get_width / 2, @y - get_height / 2, get_draw_ordering || Module.const_get("ZOrder::#{self.class.name}"))
+  #   # @image.draw(@x - get_width / 2, @y - get_height / 2, get_draw_ordering)
   # end
+  def initialize(scale, x, y)
+    @scale = scale
+    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/spaceship.png").first.resize(0.3)
+    # @image = Gosu::Image.new(image, :tileable => true)
+    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/spaceship.png")
+    # @beep = Gosu::Sample.new("#{MEDIA_DIRECTORY}/beep.wav")
+    @x, @y = x, y
+    @score = 0
+    @cooldown_wait = 0
+    @secondary_cooldown_wait = 0
+    @attack_speed = 1
+    @health = 100
+    @armor = 0
+    @rockets = 25
+    # @rocket_launcher = {}
+    @bombs = 3
+    @time_alive = 0
+    @secondary_weapon = "missile"
+  end
+
 
   def take_damage damage
     @health -= damage
@@ -55,25 +75,6 @@ class Player < GeneralObject
     end
   end
 
-  def initialize(x, y)
-    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/spaceship.png").first.resize(0.3)
-    # @image = Gosu::Image.new(image, :tileable => true)
-    @image = Gosu::Image.new("#{MEDIA_DIRECTORY}/spaceship.png")
-    # @beep = Gosu::Sample.new("#{MEDIA_DIRECTORY}/beep.wav")
-    @x, @y = x, y
-    @score = 0
-    @cooldown_wait = 0
-    @secondary_cooldown_wait = 0
-    @attack_speed = 1
-    @health = 100
-    @armor = 0
-    @rockets = 25
-    # @rocket_launcher = {}
-    @bombs = 3
-    @time_alive = 0
-    @secondary_weapon = "missile"
-  end
-
   def get_x
     @x
   end
@@ -85,26 +86,30 @@ class Player < GeneralObject
     health > 0
   end
 
+  def get_speed
+    (SPEED * @scale).round
+  end
+
   def move_left width
-    @x = [@x - Speed, (@image.width/3)].max
+    @x = [@x - get_speed, (get_width/3)].max
   end
   
   def move_right width
-    @x = [@x + Speed, (width - (@image.width/3))].min
+    @x = [@x + get_speed, (width - (get_width/3))].min
   end
   
   def accelerate height
-    @y = [@y - Speed, (@image.height/2)].max
+    @y = [@y - get_speed, (get_height/2)].max
   end
   
   def brake height
-    @y = [@y + Speed, height].min
+    @y = [@y + get_speed, height].min
   end
 
 
   def attack width, height, mouse_x = nil, mouse_y = nil
     return {
-      projectiles: [Bullet.new(width, height, self, mouse_x, mouse_y, {side: 'left'}), Bullet.new(width, height, self, mouse_x, mouse_y, {side: 'right'})],
+      projectiles: [Bullet.new(@scale, width, height, self, mouse_x, mouse_y, {side: 'left'}), Bullet.new(@scale, width, height, self, mouse_x, mouse_y, {side: 'right'})],
       cooldown: Bullet::COOLDOWN_DELAY
     }
   end
@@ -137,18 +142,18 @@ class Player < GeneralObject
     second_weapon = case @secondary_weapon
     when 'bomb'
       {
-        projectiles: [Bomb.new(width, height, self, mouse_x, mouse_y)],
+        projectiles: [Bomb.new(@scale, width, height, self, mouse_x, mouse_y)],
         cooldown: Bomb::COOLDOWN_DELAY
       }
     else
       if get_secondary_ammo_count > 1
         {
-          projectiles: [Missile.new(width, height, self, mouse_x, mouse_y, {side: 'left'}), Missile.new(width, height, self, mouse_x, mouse_y, {side: 'right'})],
+          projectiles: [Missile.new(@scale, width, height, self, mouse_x, mouse_y, {side: 'left'}), Missile.new(@scale, width, height, self, mouse_x, mouse_y, {side: 'right'})],
           cooldown: Missile::COOLDOWN_DELAY
         }
       else get_secondary_ammo_count == 1
         {
-          projectiles: [Missile.new(width, height, self, mouse_x, mouse_y)],
+          projectiles: [Missile.new(@scale, width, height, self, mouse_x, mouse_y)],
           cooldown: Missile::COOLDOWN_DELAY
         }
       end
@@ -157,10 +162,11 @@ class Player < GeneralObject
   end
 
   # def draw
-  #   @image.draw(@x - @image.width / 2, @y - @image.height / 2, Module.const_get("ZOrder::#{self.class.name}"))
+  #   @image.draw(@x - get_width / 2, @y - get_height / 2, Module.const_get("ZOrder::#{self.class.name}"))
   # end
   
   def update width, height, mouse_x = nil, mouse_y = nil, player = nil
+    # puts "TEST HERE: width: #{get_width} and height: #{get_height}"
     self.cooldown_wait -= 1 if self.cooldown_wait > 0
     self.secondary_cooldown_wait -= 1 if self.secondary_cooldown_wait > 0
     @time_alive += 1 if self.is_alive

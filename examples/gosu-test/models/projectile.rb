@@ -14,7 +14,8 @@ class Projectile < GeneralObject
   ADVANCED_HIT_BOX_DETECTION = false
 
 
-  def initialize(width, height, object, mouse_x = nil, mouse_y = nil, options = {})
+  def initialize(scale, width, height, object, mouse_x = nil, mouse_y = nil, options = {})
+    @scale = scale
     @image = get_image
     @time_alive = 0
     @mouse_start_x = mouse_x
@@ -53,25 +54,6 @@ class Projectile < GeneralObject
 
   def get_draw_ordering
     ZOrder::Projectile
-  end
-
-  # def draw
-  #   @image.draw(@x, @y, ZOrder::Projectile, scale_x = 1, scale_y = 1, color = 0xff_ffffff, mode = :default)
-  # end
-
-  # def update width, height, mouse_x = nil, mouse_y = nil, player = nil
-  #   # Inherit, add logic, then call this to calculate whether it's still visible.
-
-  #   @time_alive += 1
-  #   return is_on_screen?
-  # end
-
-  def get_height
-    @image.height
-  end
-
-  def get_width
-    @image.width
   end
 
   def hit_object(object)
@@ -129,7 +111,7 @@ class Projectile < GeneralObject
     if hit_object && self.class.get_aoe > 0
       object_groups.each do |group|
         group.each do |object|
-          if Gosu.distance(@x, @y, object.x, object.y) < self.class.get_aoe
+          if Gosu.distance(@x, @y, object.x, object.y) < self.class.get_aoe * @scale
             if object.respond_to?(:health) && object.respond_to?(:take_damage)
               object.take_damage(self.class.get_damage)
             end
@@ -233,7 +215,7 @@ class Projectile < GeneralObject
   end
 
   # def is_on_screen?
-  #   # @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
+  #   # @image.draw(@x - get_width / 2, @y - get_height / 2, ZOrder::Player)
   #   @y > (0 - get_height) && @y < (HEIGHT + get_height) && @x > (0 - get_width) && @x < (WIDTH + get_width)
   # end
 

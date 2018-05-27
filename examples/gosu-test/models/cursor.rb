@@ -8,17 +8,14 @@ class Cursor < GeneralObject
   end
 
   
-  def initialize
-    # image = Magick::Image::read("#{MEDIA_DIRECTORY}/crosshair.png").first#.resize(0.3)
-    # @image = Gosu::Image.new(image, :tileable => true)
+  def initialize scale
+    @scale = scale
     @image = get_image
   end
 
 
-  def draw scale, mouse_x, mouse_y
-    # @image.draw(@x - @image.width / 2, @y - @image.height / 2, ZOrder::Player)
-    # @image.draw(mouse_x, mouse_y, ZOrder::Cursor)
-    @image.draw(mouse_x - @image.width / 2, mouse_y - @image.height / 2, ZOrder::Cursor, scale, scale)
+  def draw mouse_x, mouse_y
+    @image.draw(mouse_x - get_width / 2, mouse_y - get_height / 2, ZOrder::Cursor, @scale, @scale)
   end
 
 end

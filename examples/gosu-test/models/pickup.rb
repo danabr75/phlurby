@@ -4,7 +4,8 @@ class Pickup < GeneralObject
   POINT_VALUE_BASE = 0
   attr_reader :x, :y
 
-  def initialize(x = nil, y = nil)
+  def initialize(scale, x = nil, y = nil)
+    @scale = scale
     @image = get_image
     @x = x
     @y = y
@@ -22,7 +23,7 @@ class Pickup < GeneralObject
 
 
   def update width, height, mouse_x = nil, mouse_y = nil, player = nil
-    @y += SCROLLING_SPEED 
+    @y += SCROLLING_SPEED * @scale
 
     super(width, height, mouse_x, mouse_y)
   end

@@ -44,6 +44,7 @@ class Missile < Projectile
     if @time_alive > self.class.get_initial_delay
       new_speed = self.class.get_starting_speed + (self.class.get_speed_increase_factor > 0 ? @time_alive * self.class.get_speed_increase_factor : 0)
       new_speed = self.class.get_max_speed if new_speed > self.class.get_max_speed
+      new_speed = new_speed * @scale
     end
 
     vx = 0
