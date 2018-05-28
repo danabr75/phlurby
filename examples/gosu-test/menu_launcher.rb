@@ -21,9 +21,9 @@ class Main < Gosu::Window
     @gl_background = GLBackground.new
     # x = self.width / 2 - 100
     # y = self.height  / 2 - 100
-    @ui_y = 0
-    @ui_x = 0
-    reset_font_ui_y
+    @center_ui_y = 0
+    @center_ui_x = 0
+    reset_center_font_ui_y
     lineHeight = 50
     self.caption = "A menu with Gosu"
     # items = Array["exit", "additem", "item"]
@@ -36,8 +36,8 @@ class Main < Gosu::Window
     #   @menu.add_item(Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/#{items[i]}.png", false), x, y, 1, actions[i], Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/#{items[i]}_hover.png", false))
     #   y += lineHeight
     # end
-    @menu.add_item(Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/exit.png", false), get_font_ui_x, get_font_ui_y, 1, lambda { self.close }, Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/exit_hover.png", false))
-    @menu.add_item(Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/start.png", false), get_font_ui_x, get_font_ui_y, 1, lambda { self.close; GameWindow.start(nil, nil, {block_controls_until_button_up: true}) }, Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/question.png", false))
+    @menu.add_item(Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/exit.png", false), get_center_font_ui_x, get_center_font_ui_y, 1, lambda { self.close }, Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/exit_hover.png", false))
+    @menu.add_item(Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/start.png", false), get_center_font_ui_x, get_center_font_ui_y, 1, lambda { self.close; GameWindow.start(nil, nil, {block_controls_until_button_up: true}) }, Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/start.png", false))
     # @back = Gosu::Image.new(self, "#{MEDIA_DIRECTORY}/back.png", false)
   end
 
@@ -59,19 +59,19 @@ class Main < Gosu::Window
     end
   end
 
-  def get_font_ui_y
-    return_value = @ui_y
-    @ui_y += 50 
+  def get_center_font_ui_y
+    return_value = @center_ui_y
+    @center_ui_y += 50 
     return return_value
   end
 
-  def get_font_ui_x
-    return @ui_x
+  def get_center_font_ui_x
+    return @center_ui_x
   end
 
-  def reset_font_ui_y
-    @ui_y = self.height  / 2 - 100
-    @ui_x = self.width / 2 - 100
+  def reset_center_font_ui_y
+    @center_ui_y = self.height  / 2 - 100
+    @center_ui_x = self.width / 2 - 100
   end
 end
 
